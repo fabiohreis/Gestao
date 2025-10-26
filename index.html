@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema - Página Inicial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .features {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+
+        .feature {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .feature h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🏢 Meu Sistema</h1>
+            <p>Bem-vindo ao nosso sistema de gerenciamento</p>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="abrirLogin()">
+                🔐 Fazer Login
+            </button>
+            
+            <button class="btn btn-secondary" onclick="sobreSistema()">
+                ℹ️ Sobre o Sistema
+            </button>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>📊 Relatórios</h3>
+                <p>Gere relatórios detalhados</p>
+            </div>
+            <div class="feature">
+                <h3>👥 Gestão</h3>
+                <p>Gerencie usuários e permissões</p>
+            </div>
+            <div class="feature">
+                <h3>🔒 Seguro</h3>
+                <p>Dados protegidos e criptografados</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirLogin() {
+            // Abre a página de login em uma nova janela/aba
+            window.open('login.html', '_self');
+            // Ou se preferir abrir na mesma janela:
+            // window.location.href = 'login.html';
+        }
+
+        function sobreSistema() {
+            alert('Sistema desenvolvido para gerenciamento empresarial.\nVersão 1.0');
+        }
+
+        // Se estiver usando Google Apps Script, pode usar:
+        function abrirLoginGAS() {
+            google.script.run
+                .withSuccessHandler(function(url) {
+                    window.open(url, '_blank');
+                })
+                .withFailureHandler(function(error) {
+                    alert('Erro ao abrir login: ' + error);
+                })
+                .getLoginUrl();
+        }
+    </script>
+</body>
+</html>
