@@ -122,8 +122,8 @@
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                <label for="usuario">Usuário:</label>
+                <input type="text" id="usuario" name="usuario" required placeholder="Seu usuário">
             </div>
 
             <div class="form-group">
@@ -153,16 +153,14 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
+            const usuario = document.getElementById('usuario').value;
             const password = document.getElementById('password').value;
             
-            // Simulação de login - você integrará com o Google Apps Script
-            if (email && password) {
-                // Aqui você fará a integração com o Google Apps Script
+            if (usuario && password) {
                 google.script.run
                     .withSuccessHandler(loginSuccess)
                     .withFailureHandler(loginError)
-                    .processLogin(email, password);
+                    .processLogin(usuario, password);
             } else {
                 showError('Preencha todos os campos');
             }
@@ -171,8 +169,8 @@
         function loginSuccess(result) {
             document.getElementById('successMessage').style.display = 'block';
             document.getElementById('errorMessage').style.display = 'none';
-            // Redirecionar ou fazer algo com o resultado
             console.log('Login bem-sucedido:', result);
+            // Aqui você pode redirecionar ou fazer outras ações
         }
 
         function loginError(error) {
@@ -187,11 +185,23 @@
         }
 
         function esqueciSenha() {
-            alert('Funcionalidade "Esqueci senha" em desenvolvimento');
+            const usuario = document.getElementById('usuario').value;
+            if (usuario) {
+                google.script.run
+                    .withSuccessHandler(function(result) {
+                        alert(result.message);
+                    })
+                    .withFailureHandler(function(error) {
+                        alert('Erro: ' + error);
+                    })
+                    .recoverPassword(usuario);
+            } else {
+                alert('Digite seu usuário primeiro');
+            }
         }
 
         function criarConta() {
-            alert('Funcionalidade "Criar conta" em desenvolvimento');
+            alert('Entre em contato com o administrador para criar uma conta');
         }
     </script>
 </body>
