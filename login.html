@@ -104,6 +104,9 @@
             text-align: center;
             margin-top: 10px;
             display: none;
+            padding: 10px;
+            background: #ffeaea;
+            border-radius: 5px;
         }
 
         .success-message {
@@ -111,6 +114,16 @@
             text-align: center;
             margin-top: 10px;
             display: none;
+            padding: 10px;
+            background: #eaffea;
+            border-radius: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -123,16 +136,20 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="usuario">Usuário:</label>
-                <input type="text" id="usuario" name="usuario" required placeholder="Seu usuário">
+                <input type="text" id="usuario" name="usuario" required placeholder="Digite seu usuário">
             </div>
 
             <div class="form-group">
                 <label for="password">Senha:</label>
-                <input type="password" id="password" name="password" required placeholder="Sua senha">
+                <input type="password" id="password" name="password" required placeholder="Digite sua senha">
             </div>
 
-            <button type="submit" class="btn-login">Entrar</button>
+            <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
         </form>
+
+        <div class="loading" id="loading">
+            🔄 Processando...
+        </div>
 
         <div class="error-message" id="errorMessage">
             Erro no login. Verifique suas credenciais.
@@ -150,51 +167,82 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Aguarda o DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página carregada - inicializando eventos...');
             
-            const usuario = document.getElementById('usuario').value;
-            const password = document.getElementById('password').value;
+            var loginForm = document.getElementById('loginForm');
+            var btnLogin = document.getElementById('btnLogin');
+            var loading = document.getElementById('loading');
+            var errorMessage = document.getElementById('errorMessage');
+            var successMessage = document.getElementById('successMessage');
             
-            if (usuario && password) {
-                google.script.run
-                    .withSuccessHandler(loginSuccess)
-                    .withFailureHandler(loginError)
-                    .processLogin(usuario, password);
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Formulário submetido');
+                    
+                    var usuario = document.getElementById('usuario').value;
+                    var password = document.getElementById('password').value;
+                    
+                    console.log('Usuário:', usuario, 'Senha:', password);
+                    
+                    if (usuario && password) {
+                        // Mostra loading
+                        loading.style.display = 'block';
+                        errorMessage.style.display = 'none';
+                        successMessage.style.display = 'none';
+                        btnLogin.disabled = true;
+                        
+                        console.log('Chamando Google Apps Script...');
+                        
+                        // Verifica se google.script.run está disponível
+                        if (typeof google !== 'undefined' && google.script && google.script.run) {
+                            google.script.run
+                                .withSuccessHandler(function(result) {
+                                    console.log('Sucesso:', result);
+                                    loading.style.display = 'none';
+                                    successMessage.textContent = result.message || 'Login realizado!';
+                                    successMessage.style.display = 'block';
+                                    btnLogin.disabled = false;
+                                })
+                                .withFailureHandler(function(error) {
+                                    console.log('Erro:', error);
+                                    loading.style.display = 'none';
+                                    errorMessage.textContent = 'Erro: ' + error;
+                                    errorMessage.style.display = 'block';
+                                    btnLogin.disabled = false;
+                                })
+                                .processLogin(usuario, password);
+                        } else {
+                            console.log('google.script.run não disponível');
+                            loading.style.display = 'none';
+                            errorMessage.textContent = 'Erro: Sistema não carregou corretamente. Recarregue a página.';
+                            errorMessage.style.display = 'block';
+                            btnLogin.disabled = false;
+                        }
+                    } else {
+                        errorMessage.textContent = 'Preencha todos os campos';
+                        errorMessage.style.display = 'block';
+                    }
+                });
             } else {
-                showError('Preencha todos os campos');
+                console.log('Formulário não encontrado');
             }
         });
 
-        function loginSuccess(result) {
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            console.log('Login bem-sucedido:', result);
-            // Aqui você pode redirecionar ou fazer outras ações
-        }
-
-        function loginError(error) {
-            showError('Erro no login: ' + error);
-        }
-
-        function showError(message) {
-            const errorElement = document.getElementById('errorMessage');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            document.getElementById('successMessage').style.display = 'none';
-        }
-
         function esqueciSenha() {
-            const usuario = document.getElementById('usuario').value;
+            var usuario = document.getElementById('usuario').value;
             if (usuario) {
-                google.script.run
-                    .withSuccessHandler(function(result) {
-                        alert(result.message);
-                    })
-                    .withFailureHandler(function(error) {
-                        alert('Erro: ' + error);
-                    })
-                    .recoverPassword(usuario);
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run
+                        .withSuccessHandler(function(result) {
+                            alert(result.message);
+                        })
+                        .recoverPassword(usuario);
+                } else {
+                    alert('Digite seu usuário e tente novamente');
+                }
             } else {
                 alert('Digite seu usuário primeiro');
             }
@@ -203,6 +251,9 @@
         function criarConta() {
             alert('Entre em contato com o administrador para criar uma conta');
         }
+
+        // Debug
+        console.log('Script carregado - Google Apps Script disponível:', typeof google !== 'undefined');
     </script>
 </body>
 </html>
