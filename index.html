@@ -144,26 +144,12 @@
 
     <script>
         function abrirLogin() {
-            // Abre a página de login em uma nova janela/aba
-            window.open('login.html', '_self');
-            // Ou se preferir abrir na mesma janela:
-            // window.location.href = 'login.html';
+            // Abre a URL do seu Web App do Google Apps Script
+            window.location.href = 'https://script.google.com/macros/s/AKfycbytGX7PXy32Rd_ZpF6AUzPRbINONvGl5Pc9CTglEFsN53mWeShIw99XRs02Ajsbi-s28g/exec';
         }
 
         function sobreSistema() {
             alert('Sistema desenvolvido para gerenciamento empresarial.\nVersão 1.0');
-        }
-
-        // Se estiver usando Google Apps Script, pode usar:
-        function abrirLoginGAS() {
-            google.script.run
-                .withSuccessHandler(function(url) {
-                    window.open(url, '_blank');
-                })
-                .withFailureHandler(function(error) {
-                    alert('Erro ao abrir login: ' + error);
-                })
-                .getLoginUrl();
         }
     </script>
 </body>
