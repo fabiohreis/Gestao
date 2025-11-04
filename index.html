@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema - Página Inicial</title>
+    <title>Gestão - Manutenção Industrial</title>
     <style>
         * {
             margin: 0;
@@ -14,48 +14,50 @@
 
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
+            padding: 20px;
         }
 
         .container {
             background: white;
-            padding: 50px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            width: 100%;
             max-width: 500px;
         }
 
         .logo {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .logo h1 {
             color: #333;
-            font-size: 2.5em;
+            font-size: clamp(1.8em, 5vw, 2.5em);
             margin-bottom: 10px;
         }
 
         .logo p {
             color: #666;
-            font-size: 1.1em;
+            font-size: clamp(0.9em, 3vw, 1.1em);
         }
 
         .btn-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 25px;
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 14px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: clamp(1em, 3.5vw, 1.1em);
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
@@ -67,7 +69,7 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover, .btn-primary:active {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
@@ -78,21 +80,21 @@
             border: 2px solid #ddd;
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover, .btn-secondary:active {
             background: #e9ecef;
             transform: translateY(-2px);
         }
 
         .features {
-            margin-top: 40px;
+            margin-top: 30px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
             text-align: left;
         }
 
         .feature {
-            padding: 15px;
+            padding: 12px;
             background: #f8f9fa;
             border-radius: 8px;
         }
@@ -100,20 +102,54 @@
         .feature h3 {
             color: #333;
             margin-bottom: 5px;
-            font-size: 1em;
+            font-size: clamp(0.9em, 3vw, 1em);
         }
 
         .feature p {
             color: #666;
-            font-size: 0.9em;
+            font-size: clamp(0.8em, 2.5vw, 0.9em);
+        }
+
+        /* Media Queries para telas menores */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .btn-container {
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 12px 15px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 15px 10px;
+            }
+            
+            .logo h1 {
+                font-size: 1.6em;
+            }
+            
+            .btn {
+                padding: 10px 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">
-            <h1>🏢 Meu Sistema</h1>
-            <p>Bem-vindo ao nosso sistema de gerenciamento</p>
+            <h1>🏢 Gestão da Manutenção</h1>
+            <p>Bem-vindo ao sistema de Gestão da Manutenção</p>
         </div>
 
         <div class="btn-container">
@@ -154,4 +190,3 @@
     </script>
 </body>
 </html>
-
