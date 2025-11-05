@@ -3,191 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão - Manutenção Industrial</title>
+    <title>Manutenção 4.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #000;
+            color: #fff;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(30, 30, 30, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(40, 40, 40, 0.6) 0%, transparent 50%);
+            z-index: -1;
+            transition: opacity 1.5s;
+        }
+
+        .content {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 10;
+            transition: all 1s ease;
+        }
+
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            transition: transform 1s, opacity 1s;
+        }
+
+        .version {
+            font-size: 6rem;
+            font-weight: 200;
+            margin-bottom: 2rem;
+            letter-spacing: 4px;
+            transition: transform 1s, opacity 1s;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            color: #ccc;
+            line-height: 1.6;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 1px;
+            transition: transform 1s, opacity 1s;
+        }
+
+        .divider {
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #fff, transparent);
+            margin: 0 auto 3rem auto;
+            transition: transform 1s, opacity 1s;
+        }
+
+        .access-button {
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .access-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            letter-spacing: 4px;
+        }
+
+        .access-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .access-button:hover:before {
+            left: 100%;
+        }
+
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 1.5s;
+        }
+
+        .line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .vertical {
+            width: 1px;
+            height: 100%;
+            top: 0;
+        }
+
+        .horizontal {
+            height: 1px;
+            width: 100%;
+            left: 0;
+        }
+
+        .vertical:nth-child(1) { left: 10%; }
+        .vertical:nth-child(2) { left: 20%; }
+        .vertical:nth-child(3) { left: 30%; }
+        .vertical:nth-child(4) { left: 40%; }
+        .vertical:nth-child(5) { left: 50%; }
+        .vertical:nth-child(6) { left: 60%; }
+        .vertical:nth-child(7) { left: 70%; }
+        .vertical:nth-child(8) { left: 80%; }
+        .vertical:nth-child(9) { left: 90%; }
+
+        .horizontal:nth-child(10) { top: 10%; }
+        .horizontal:nth-child(11) { top: 20%; }
+        .horizontal:nth-child(12) { top: 30%; }
+        .horizontal:nth-child(13) { top: 40%; }
+        .horizontal:nth-child(14) { top: 50%; }
+        .horizontal:nth-child(15) { top: 60%; }
+        .horizontal:nth-child(16) { top: 70%; }
+        .horizontal:nth-child(17) { top: 80%; }
+        .horizontal:nth-child(18) { top: 90%; }
+
+        .corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+        }
+
+        .corner-tl {
+            top: 2rem;
+            left: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .corner-tr {
+            top: 2rem;
+            right: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .corner-bl {
+            bottom: 2rem;
+            left: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .corner-br {
+            bottom: 2rem;
+            right: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Efeito de transição melhorado */
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s;
+        }
+
+        .transition-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-top: 2rem;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .loading-text.active {
+            opacity: 1;
+        }
+
+        .vortex-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 20px;
         }
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            width: 100%;
-            max-width: 500px;
+        .vortex-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top: 2px solid #fff;
+            animation: spin 2s linear infinite;
         }
 
-        .logo {
-            margin-bottom: 25px;
+        .vortex-ring:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            animation-delay: 0s;
         }
 
-        .logo h1 {
-            color: #333;
-            font-size: clamp(1.8em, 5vw, 2.5em);
-            margin-bottom: 10px;
+        .vortex-ring:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            animation-delay: 0.2s;
+            animation-direction: reverse;
         }
 
-        .logo p {
-            color: #666;
-            font-size: clamp(0.9em, 3vw, 1.1em);
+        .vortex-ring:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            animation-delay: 0.4s;
         }
 
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 25px;
+        .vortex-ring:nth-child(4) {
+            width: 60px;
+            height: 60px;
+            animation-delay: 0.6s;
+            animation-direction: reverse;
         }
 
-        .btn {
-            padding: 14px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: clamp(1em, 3.5vw, 1.1em);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+        .vortex-ring:nth-child(5) {
+            width: 20px;
+            height: 20px;
+            animation-delay: 0.8s;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .btn-primary:hover, .btn-primary:active {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #333;
-            border: 2px solid #ddd;
-        }
-
-        .btn-secondary:hover, .btn-secondary:active {
-            background: #e9ecef;
-            transform: translateY(-2px);
-        }
-
-        .features {
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            text-align: left;
-        }
-
-        .feature {
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .feature h3 {
-            color: #333;
-            margin-bottom: 5px;
-            font-size: clamp(0.9em, 3vw, 1em);
-        }
-
-        .feature p {
-            color: #666;
-            font-size: clamp(0.8em, 2.5vw, 0.9em);
-        }
-
-        /* Media Queries para telas menores */
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px 15px;
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 3rem;
+                letter-spacing: 4px;
             }
             
-            .btn-container {
-                gap: 10px;
+            .version {
+                font-size: 4rem;
             }
             
-            .btn {
-                padding: 12px 15px;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .container {
-                padding: 15px 10px;
-            }
-            
-            .logo h1 {
-                font-size: 1.6em;
-            }
-            
-            .btn {
-                padding: 10px 12px;
+            .subtitle {
+                font-size: 1rem;
+                padding: 0 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <h1>🏢 Gestão da Manutenção</h1>
-            <p>Bem-vindo ao sistema de Gestão da Manutenção</p>
-        </div>
+    <div class="background" id="background"></div>
+    
+    <div class="grid-lines" id="gridLines">
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        <div class="line vertical"></div>
+        
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        <div class="line horizontal"></div>
+        
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+    </div>
 
-        <div class="btn-container">
-            <button class="btn btn-primary" onclick="abrirLogin()">
-                🔐 Fazer Login
-            </button>
-            
-            <button class="btn btn-secondary" onclick="sobreSistema()">
-                ℹ️ Sobre o Sistema
-            </button>
-        </div>
+    <div class="content" id="content">
+        <h1 class="main-title">MANUTENÇÃO</h1>
+        <div class="version">4.0</div>
+        
+        <p class="subtitle">A EVOLUÇÃO DA GESTÃO DE ATIVOS NA ERA DIGITAL</p>
+        
+        <div class="divider"></div>
+        
+        <button class="access-button" id="accessButton">ACESSAR SISTEMA</button>
+    </div>
 
-        <div class="features">
-            <div class="feature">
-                <h3>📊 Relatórios</h3>
-                <p>Gere relatórios detalhados</p>
-            </div>
-            <div class="feature">
-                <h3>👥 Gestão</h3>
-                <p>Gerencie usuários e permissões</p>
-            </div>
-            <div class="feature">
-                <h3>🔒 Seguro</h3>
-                <p>Dados protegidos e criptografados</p>
-            </div>
+    <!-- Transição melhorada -->
+    <div class="transition-overlay" id="transitionOverlay">
+        <div class="vortex-container">
+            <div class="vortex-ring"></div>
+            <div class="vortex-ring"></div>
+            <div class="vortex-ring"></div>
+            <div class="vortex-ring"></div>
+            <div class="vortex-ring"></div>
         </div>
+        <div class="loading-text" id="loadingText">CARREGANDO SISTEMA...</div>
     </div>
 
     <script>
-        function abrirLogin() {
-            // Abre a URL do seu Web App do Google Apps Script
-            window.location.href = 'https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec';
-        }
-
-        function sobreSistema() {
-            alert('Sistema desenvolvido para gerenciamento empresarial.\nVersão 1.0');
-        }
+        // Transição suave ao clicar no botão
+        document.getElementById('accessButton').addEventListener('click', function() {
+            const content = document.getElementById('content');
+            const background = document.getElementById('background');
+            const gridLines = document.getElementById('gridLines');
+            const transitionOverlay = document.getElementById('transitionOverlay');
+            const loadingText = document.getElementById('loadingText');
+            
+            // Desaparecer elementos da página atual
+            content.style.opacity = '0';
+            content.style.transform = 'scale(0.9)';
+            background.style.opacity = '0';
+            gridLines.style.opacity = '0';
+            
+            // Mostrar overlay de transição
+            setTimeout(() => {
+                transitionOverlay.classList.add('active');
+                
+                // Mostrar texto de carregamento após um breve delay
+                setTimeout(() => {
+                    loadingText.classList.add('active');
+                }, 500);
+            }, 800);
+            
+            // Redirecionar após a transição
+            setTimeout(() => {
+                window.location.href = 'https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec';
+            }, 3500);
+        });
     </script>
 </body>
 </html>
-
