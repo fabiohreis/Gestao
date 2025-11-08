@@ -312,9 +312,11 @@
             }
         }
 
-        // Função para abrir o UOL na mesma aba
+        // Função para abrir o UOL usando redirecionamento via Apps Script
         function openUOL() {
-            window.location.href = 'https://www.uol.com.br';
+            // Usar o redirecionamento via Apps Script para contornar restrições
+            const redirectUrl = 'https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec?page=redirect&url=' + encodeURIComponent('https://www.uol.com.br');
+            window.location.href = redirectUrl;
         }
         
         // Inicializar a página
