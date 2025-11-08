@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Manutenção Industrial - Serviços</title>
+    <title>Sistema de Manutenção Industrial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -18,130 +18,77 @@
             min-height: 100vh;
             padding: 20px;
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .container {
             background: white;
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 500px;
+            width: 100%;
             overflow: hidden;
+            text-align: center;
         }
         
         .header {
             background: #1a3a5f;
             color: white;
             padding: 25px 20px;
-            text-align: center;
-            position: relative;
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 8px;
             font-weight: 600;
         }
         
         .header h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
+            font-size: 16px;
             font-weight: 500;
             opacity: 0.9;
-        }
-        
-        .user-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 14px;
         }
         
         .content {
             padding: 30px;
         }
         
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
+        .user-info {
             background: #e8f4fd;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
             border-left: 4px solid #1a3a5f;
         }
         
-        .welcome-section h3 {
+        .user-info h3 {
             color: #1a3a5f;
-            margin-bottom: 10px;
-            font-size: 24px;
+            margin-bottom: 5px;
         }
         
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .service-card {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-color: #1a3a5f;
-        }
-        
-        .service-card i {
-            font-size: 40px;
-            color: #1a3a5f;
-            margin-bottom: 15px;
-        }
-        
-        .service-card h4 {
-            color: #1a3a5f;
-            margin-bottom: 10px;
+        .user-name {
             font-size: 18px;
-        }
-        
-        .service-card p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .quick-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
+            font-weight: 600;
+            color: #2c5c8a;
         }
         
         .action-btn {
             background: #1a3a5f;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 15px 30px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            margin: 10px 0;
         }
         
         .action-btn:hover {
@@ -149,130 +96,13 @@
             transform: translateY(-2px);
         }
         
-        .btn-logout {
-            background: #6c757d;
-        }
-        
-        .btn-logout:hover {
-            background: #5a6268;
-        }
-
-        .btn-uol {
-            background: #ff6b00;
-        }
-        
-        .btn-uol:hover {
-            background: #e55a00;
-        }
-        
         .system-info {
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 25px;
+            padding: 15px;
             background: #f8f9fa;
-            border-radius: 10px;
-            text-align: center;
-            border-top: 3px solid #1a3a5f;
-        }
-
-        /* Modal para links externos */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 25px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn-confirm {
-            background: #28a745;
-            color: white;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .btn-cancel {
-            background: #6c757d;
-            color: white;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .btn-new-tab {
-            background: #17a2b8;
-            color: white;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .external-link-info {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 15px 0;
-            font-size: 14px;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .user-info {
-                position: static;
-                margin-top: 15px;
-            }
-            
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .action-btn {
-                width: 100%;
-                max-width: 300px;
-                justify-content: center;
-            }
-
-            .modal-content {
-                margin: 20% auto;
-                width: 95%;
-                padding: 20px;
-            }
-
-            .modal-buttons {
-                flex-direction: column;
-            }
-
-            .btn-confirm, .btn-cancel, .btn-new-tab {
-                width: 100%;
-            }
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
@@ -280,89 +110,21 @@
     <div class="container">
         <div class="header">
             <h1>MANUTENÇÃO INDUSTRIAL</h1>
-            <h2>SISTEMA DE GESTÃO - PAINEL DE SERVIÇOS</h2>
-            <div class="user-info">
-                <i class="fas fa-user"></i>
-                <span id="currentUser">Usuário</span>
-            </div>
+            <h2>SISTEMA DE GESTÃO</h2>
         </div>
         
         <div class="content">
-            <div class="welcome-section">
-                <h3 id="welcomeTitle">Bem-vindo ao Sistema</h3>
-                <p>Selecione uma das opções abaixo para gerenciar as atividades de manutenção</p>
+            <div class="user-info">
+                <h3>Usuário Logado:</h3>
+                <div class="user-name" id="currentUser">Carregando...</div>
             </div>
             
-            <div class="services-grid">
-                <div class="service-card" onclick="openService('manutencao')">
-                    <i class="fas fa-tools"></i>
-                    <h4>Solicitação de Manutenção</h4>
-                    <p>Abra uma nova solicitação de manutenção corretiva ou preventiva</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('relatorios')">
-                    <i class="fas fa-chart-bar"></i>
-                    <h4>Relatórios e Análises</h4>
-                    <p>Consulte relatórios de desempenho e métricas de manutenção</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('estoque')">
-                    <i class="fas fa-boxes"></i>
-                    <h4>Gestão de Estoques</h4>
-                    <p>Controle de peças, materiais e inventário técnico</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('calendario')">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h4>Agenda de Manutenção</h4>
-                    <p>Planejamento e acompanhamento de atividades programadas</p>
-                </div>
-            </div>
-            
-            <div class="quick-actions">
-                <button class="action-btn" onclick="openService('manutencao')">
-                    <i class="fas fa-plus"></i> Nova Solicitação
-                </button>
-                <button class="action-btn" onclick="openService('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </button>
-                <button class="action-btn btn-uol" onclick="openUOL()">
-                    <i class="fas fa-external-link-alt"></i> Acessar UOL
-                </button>
-                <a href="https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec" class="action-btn btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Sair do Sistema
-                </a>
-            </div>
+            <button class="action-btn" onclick="openTestPage()">
+                <i class="fas fa-external-link-alt"></i> Abrir Página de Teste
+            </button>
             
             <div class="system-info">
-                <p><strong>Sistema de Gestão de Manutenção Industrial v2.1.4</strong></p>
-                <p>Status: <span style="color: #28a745; font-weight: bold;">● ONLINE</span></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para links externos -->
-    <div id="externalLinkModal" class="modal">
-        <div class="modal-content">
-            <h3><i class="fas fa-external-link-alt"></i> Acesso a Site Externo</h3>
-            
-            <div class="external-link-info">
-                <p><strong>Você está saindo do sistema</strong></p>
-                <p>Será redirecionado para: <strong>www.uol.com.br</strong></p>
-            </div>
-
-            <p>Escolha como deseja abrir o link:</p>
-            
-            <div class="modal-buttons">
-                <button class="action-btn btn-confirm" onclick="openUOLSameTab()">
-                    <i class="fas fa-window-restore"></i> Mesma Aba
-                </button>
-                <button class="action-btn btn-new-tab" onclick="openUOLNewTab()">
-                    <i class="fas fa-plus-square"></i> Nova Aba
-                </button>
-                <button class="action-btn btn-cancel" onclick="closeModal()">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
+                <p><strong>Sistema de Gestão v2.1.4</strong> | Status: <span style="color: #28a745;">● ONLINE</span></p>
             </div>
         </div>
     </div>
@@ -379,124 +141,25 @@
             const usuario = getUrlParameter('usuario');
             if (usuario) {
                 const userDisplay = document.getElementById('currentUser');
-                const welcomeTitle = document.getElementById('welcomeTitle');
-                
                 const decodedUser = decodeURIComponent(usuario);
                 userDisplay.textContent = decodedUser;
-                welcomeTitle.textContent = `Bem-vindo, ${decodedUser}!`;
             }
         }
         
-        // Função para abrir serviços (placeholder)
-        function openService(serviceType) {
+        // Função para abrir a página teste.html em nova aba
+        function openTestPage() {
             const usuario = getUrlParameter('usuario');
-            const userParam = usuario ? `?usuario=${usuario}` : '';
-            
-            switch(serviceType) {
-                case 'manutencao':
-                    alert('🔧 Funcionalidade de Solicitação de Manutenção\n\nUsuário: ' + 
-                          (usuario ? decodeURIComponent(usuario) : 'Não identificado') + 
-                          '\n\nEsta funcionalidade será implementada em breve.');
-                    break;
-                case 'relatorios':
-                    alert('📊 Módulo de Relatórios em desenvolvimento');
-                    break;
-                case 'estoque':
-                    alert('📦 Sistema de Gestão de Estoques em desenvolvimento');
-                    break;
-                case 'calendario':
-                    alert('📅 Agenda de Manutenção em desenvolvimento');
-                    break;
-                case 'dashboard':
-                    alert('📈 Dashboard de Métricas em desenvolvimento');
-                    break;
-            }
-        }
-
-        // Modal functions
-        function openUOL() {
-            document.getElementById('externalLinkModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('externalLinkModal').style.display = 'none';
-        }
-
-        // SOLUÇÃO INOVADORA: Múltiplas estratégias de abertura
-        function openUOLSameTab() {
-            closeModal();
-            
-            // Estratégia 1: Tentar location.href primeiro
-            try {
-                window.location.href = 'https://www.uol.com.br';
-            } catch (e) {
-                // Estratégia 2: Se falhar, usar replace
-                window.location.replace('https://www.uol.com.br');
-            }
-            
-            // Estratégia 3: Fallback com timeout
-            setTimeout(() => {
-                // Se ainda estiver na mesma página, tentar abordagem mais agressiva
-                if (window.location.href.indexOf('uol.com.br') === -1) {
-                    // Criar link temporário e simular clique
-                    const tempLink = document.createElement('a');
-                    tempLink.href = 'https://www.uol.com.br';
-                    tempLink.target = '_self';
-                    tempLink.style.display = 'none';
-                    document.body.appendChild(tempLink);
-                    tempLink.click();
-                    document.body.removeChild(tempLink);
-                }
-            }, 1000);
-        }
-
-        function openUOLNewTab() {
-            closeModal();
-            
-            // Abrir em nova aba/guia - geralmente funciona melhor
-            const newWindow = window.open('https://www.uol.com.br', '_blank');
-            
-            // Fallback se o popup for bloqueado
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                // Tentar abrir na mesma aba como fallback
-                openUOLSameTab();
-            }
-        }
-
-        // Função alternativa direta (sem modal)
-        function openUOLDirect() {
-            // Abordagem mais direta para mobile
-            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                // Para mobile, usar approach mais compatível
-                window.open('https://www.uol.com.br', '_system');
+            if (usuario) {
+                // Abrir em NOVA ABA com o parâmetro do usuário
+                const testPageUrl = `teste.html?usuario=${usuario}`;
+                window.open(testPageUrl, '_blank');
             } else {
-                // Para desktop
-                window.open('https://www.uol.com.br', '_blank');
+                alert('Usuário não identificado!');
             }
         }
         
         // Inicializar a página
         document.addEventListener('DOMContentLoaded', loadUserInfo);
-
-        // Fechar modal clicando fora
-        window.onclick = function(event) {
-            const modal = document.getElementById('externalLinkModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-
-        // Adicionar fallback global para links externos
-        document.addEventListener('DOMContentLoaded', function() {
-            // Prevenir comportamento padrão e usar nossa lógica
-            const uolButton = document.querySelector('.btn-uol');
-            if (uolButton) {
-                uolButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openUOL();
-                });
-            }
-        });
     </script>
 </body>
 </html>
