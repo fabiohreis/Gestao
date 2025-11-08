@@ -174,7 +174,7 @@
             border-top: 3px solid #1a3a5f;
         }
 
-        /* Modal para confirmação */
+        /* Modal para links externos */
         .modal {
             display: none;
             position: fixed;
@@ -189,11 +189,12 @@
         .modal-content {
             background-color: white;
             margin: 15% auto;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             width: 90%;
             max-width: 400px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .modal-buttons {
@@ -201,16 +202,37 @@
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn-confirm {
             background: #28a745;
             color: white;
+            flex: 1;
+            min-width: 120px;
         }
 
         .btn-cancel {
             background: #6c757d;
             color: white;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-new-tab {
+            background: #17a2b8;
+            color: white;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .external-link-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 15px 0;
+            font-size: 14px;
         }
         
         @media (max-width: 768px) {
@@ -241,6 +263,15 @@
             .modal-content {
                 margin: 20% auto;
                 width: 95%;
+                padding: 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .btn-confirm, .btn-cancel, .btn-new-tab {
+                width: 100%;
             }
         }
     </style>
@@ -295,7 +326,7 @@
                 <button class="action-btn" onclick="openService('dashboard')">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </button>
-                <button class="action-btn btn-uol" onclick="confirmUOL()">
+                <button class="action-btn btn-uol" onclick="openUOL()">
                     <i class="fas fa-external-link-alt"></i> Acessar UOL
                 </button>
                 <a href="https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec" class="action-btn btn-logout">
@@ -310,15 +341,28 @@
         </div>
     </div>
 
-    <!-- Modal de confirmação -->
-    <div id="uolModal" class="modal">
+    <!-- Modal para links externos -->
+    <div id="externalLinkModal" class="modal">
         <div class="modal-content">
-            <h3>Redirecionamento para site externo</h3>
-            <p>Você está sendo redirecionado para o site do UOL. Esta é uma página externa ao sistema.</p>
-            <p>Deseja continuar?</p>
+            <h3><i class="fas fa-external-link-alt"></i> Acesso a Site Externo</h3>
+            
+            <div class="external-link-info">
+                <p><strong>Você está saindo do sistema</strong></p>
+                <p>Será redirecionado para: <strong>www.uol.com.br</strong></p>
+            </div>
+
+            <p>Escolha como deseja abrir o link:</p>
+            
             <div class="modal-buttons">
-                <button class="action-btn btn-confirm" onclick="openUOL()">Continuar</button>
-                <button class="action-btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="action-btn btn-confirm" onclick="openUOLSameTab()">
+                    <i class="fas fa-window-restore"></i> Mesma Aba
+                </button>
+                <button class="action-btn btn-new-tab" onclick="openUOLNewTab()">
+                    <i class="fas fa-plus-square"></i> Nova Aba
+                </button>
+                <button class="action-btn btn-cancel" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
             </div>
         </div>
     </div>
@@ -370,19 +414,65 @@
         }
 
         // Modal functions
-        function confirmUOL() {
-            document.getElementById('uolModal').style.display = 'block';
+        function openUOL() {
+            document.getElementById('externalLinkModal').style.display = 'block';
         }
 
         function closeModal() {
-            document.getElementById('uolModal').style.display = 'none';
+            document.getElementById('externalLinkModal').style.display = 'none';
         }
 
-        // Função para abrir o UOL diretamente - SOLUÇÃO SIMPLES
-        function openUOL() {
+        // SOLUÇÃO INOVADORA: Múltiplas estratégias de abertura
+        function openUOLSameTab() {
             closeModal();
-            // Abrir diretamente na mesma aba - SEM passar pelo Apps Script
-            window.location.href = 'https://www.uol.com.br';
+            
+            // Estratégia 1: Tentar location.href primeiro
+            try {
+                window.location.href = 'https://www.uol.com.br';
+            } catch (e) {
+                // Estratégia 2: Se falhar, usar replace
+                window.location.replace('https://www.uol.com.br');
+            }
+            
+            // Estratégia 3: Fallback com timeout
+            setTimeout(() => {
+                // Se ainda estiver na mesma página, tentar abordagem mais agressiva
+                if (window.location.href.indexOf('uol.com.br') === -1) {
+                    // Criar link temporário e simular clique
+                    const tempLink = document.createElement('a');
+                    tempLink.href = 'https://www.uol.com.br';
+                    tempLink.target = '_self';
+                    tempLink.style.display = 'none';
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                }
+            }, 1000);
+        }
+
+        function openUOLNewTab() {
+            closeModal();
+            
+            // Abrir em nova aba/guia - geralmente funciona melhor
+            const newWindow = window.open('https://www.uol.com.br', '_blank');
+            
+            // Fallback se o popup for bloqueado
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                // Tentar abrir na mesma aba como fallback
+                openUOLSameTab();
+            }
+        }
+
+        // Função alternativa direta (sem modal)
+        function openUOLDirect() {
+            // Abordagem mais direta para mobile
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Para mobile, usar approach mais compatível
+                window.open('https://www.uol.com.br', '_system');
+            } else {
+                // Para desktop
+                window.open('https://www.uol.com.br', '_blank');
+            }
         }
         
         // Inicializar a página
@@ -390,11 +480,23 @@
 
         // Fechar modal clicando fora
         window.onclick = function(event) {
-            const modal = document.getElementById('uolModal');
+            const modal = document.getElementById('externalLinkModal');
             if (event.target === modal) {
                 closeModal();
             }
         }
+
+        // Adicionar fallback global para links externos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevenir comportamento padrão e usar nossa lógica
+            const uolButton = document.querySelector('.btn-uol');
+            if (uolButton) {
+                uolButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openUOL();
+                });
+            }
+        });
     </script>
 </body>
 </html>
