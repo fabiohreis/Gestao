@@ -96,6 +96,28 @@
             transform: translateY(-2px);
         }
 
+        .btn-link {
+            background: #1a3a5f;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 5px;
+        }
+
+        .btn-link:hover {
+            background: #2c5c8a;
+            transform: translateY(-2px);
+        }
+
         .btn-close {
             background: #6c757d;
         }
@@ -129,6 +151,11 @@
             justify-content: center;
             flex-wrap: wrap;
         }
+
+        /* Esconder o link real */
+        .hidden-link {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -146,13 +173,15 @@
 
             <div class="info-message">
                 <i class="fas fa-info-circle"></i>
-                A página de teste será aberta em uma nova aba. Você pode fechar esta aba manualmente.
+                Clique no botão abaixo para abrir a página de teste em uma nova aba.
             </div>
             
             <div class="button-group">
-                <button class="action-btn" onclick="openTestPage()">
+                <!-- LINK REAL que funciona no iOS -->
+                <a id="testPageLink" href="#" target="_blank" class="btn-link">
                     <i class="fas fa-external-link-alt"></i> Abrir Página de Teste
-                </button>
+                </a>
+                
                 <button class="action-btn btn-close" onclick="closePage()">
                     <i class="fas fa-times"></i> Fechar Esta Página
                 </button>
@@ -178,35 +207,19 @@
                 const userDisplay = document.getElementById('currentUser');
                 const decodedUser = decodeURIComponent(usuario);
                 userDisplay.textContent = decodedUser;
-            }
-        }
-        
-        // Função para abrir a página teste.html em NOVA ABA
-        function openTestPage() {
-            const usuario = getUrlParameter('usuario');
-            if (usuario) {
-                // Abrir em NOVA ABA (funciona no GitHub Pages)
-                const testPageUrl = `teste.html?usuario=${usuario}`;
-                window.open(testPageUrl, '_blank');
                 
-                // Mostrar mensagem educada
-                alert('Página de teste aberta em nova aba. Você pode fechar esta aba agora.');
-            } else {
-                alert('Usuário não identificado!');
+                // Configurar o link com o usuário
+                const testPageLink = document.getElementById('testPageLink');
+                testPageLink.href = `teste.html?usuario=${usuario}`;
             }
         }
 
-        // Função para tentar fechar a página (pode não funcionar)
+        // Função para tentar fechar a página
         function closePage() {
-            // Tenta fechar - funciona apenas em algumas situações
             if (window.history.length > 1) {
-                window.history.back(); // Volta para página anterior
+                window.history.back();
             } else {
-                // Se não puder voltar, tenta fechar
-                window.close(); // Pode não funcionar
-                
-                // Mensagem alternativa
-                alert('Por favor, feche esta aba manualmente (Ctrl+W ou X).');
+                alert('Por favor, feche esta aba manualmente.');
             }
         }
         
