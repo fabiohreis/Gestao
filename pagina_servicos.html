@@ -16,18 +16,17 @@
         body {
             background: linear-gradient(135deg, #1a3a5f 0%, #2c5c8a 100%);
             min-height: 100vh;
-            padding: 15px;
+            padding: 0;
             color: #333;
         }
         
         .container {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             width: 100%;
+            min-height: 100vh;
             margin: 0 auto;
-            overflow: hidden;
-            min-height: calc(100vh - 30px);
+            display: flex;
+            flex-direction: column;
         }
         
         .header {
@@ -35,18 +34,17 @@
             color: white;
             padding: 20px 15px;
             text-align: center;
-            position: relative;
         }
         
         .header h1 {
-            font-size: 22px;
-            margin-bottom: 6px;
+            font-size: 20px;
+            margin-bottom: 5px;
             font-weight: 600;
             line-height: 1.2;
         }
         
         .header h2 {
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 10px;
             font-weight: 500;
             opacity: 0.9;
@@ -58,17 +56,19 @@
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 13px;
-            margin-top: 10px;
             display: inline-block;
         }
         
         .content {
             padding: 20px 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .welcome-section {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding: 15px;
             background: #e8f4fd;
             border-radius: 8px;
@@ -78,28 +78,29 @@
         .welcome-section h3 {
             color: #1a3a5f;
             margin-bottom: 8px;
-            font-size: 20px;
+            font-size: 18px;
             line-height: 1.2;
         }
         
         .welcome-section p {
             font-size: 14px;
             line-height: 1.4;
+            color: #666;
         }
         
         .services-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex: 1;
         }
         
         .service-card {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
             border-radius: 8px;
-            padding: 20px 15px;
-            text-align: center;
+            padding: 15px;
             transition: all 0.3s ease;
             cursor: pointer;
         }
@@ -110,30 +111,38 @@
             border-color: #1a3a5f;
         }
         
+        .service-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
         .service-card i {
-            font-size: 32px;
+            font-size: 24px;
             color: #1a3a5f;
-            margin-bottom: 12px;
+            width: 30px;
         }
         
         .service-card h4 {
             color: #1a3a5f;
-            margin-bottom: 8px;
             font-size: 16px;
             line-height: 1.2;
+            flex: 1;
         }
         
         .service-card p {
             color: #666;
             font-size: 13px;
             line-height: 1.4;
+            margin-left: 42px;
         }
         
         .quick-actions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 25px;
+            gap: 10px;
+            margin-top: auto;
         }
         
         .action-btn {
@@ -168,8 +177,8 @@
         }
         
         .system-info {
-            margin-top: 25px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 12px;
             background: #f8f9fa;
             border-radius: 8px;
             text-align: center;
@@ -177,20 +186,28 @@
         }
         
         .system-info p {
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.4;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         
-        /* Melhorias para telas maiores que mobile */
+        .status-online {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        /* Desktop */
         @media (min-width: 768px) {
             body {
                 padding: 20px;
             }
             
             .container {
-                max-width: 1200px;
+                max-width: 800px;
                 border-radius: 15px;
+                min-height: auto;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                margin: 20px auto;
             }
             
             .header {
@@ -198,18 +215,17 @@
             }
             
             .header h1 {
-                font-size: 28px;
+                font-size: 24px;
             }
             
             .header h2 {
-                font-size: 18px;
+                font-size: 16px;
             }
             
             .user-info {
                 position: absolute;
                 top: 20px;
                 right: 20px;
-                margin-top: 0;
             }
             
             .content {
@@ -217,25 +233,26 @@
             }
             
             .services-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 20px;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .service-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
                 border-color: #1a3a5f;
             }
             
             .quick-actions {
                 flex-direction: row;
                 justify-content: center;
-                flex-wrap: wrap;
+                gap: 15px;
             }
             
             .action-btn {
                 width: auto;
-                padding: 12px 25px;
+                padding: 12px 20px;
             }
             
             .action-btn:hover {
@@ -248,22 +265,14 @@
             }
         }
 
-        /* Ajustes para telas muito pequenas */
+        /* Telas muito pequenas */
         @media (max-width: 360px) {
-            body {
-                padding: 10px;
-            }
-            
             .header {
                 padding: 15px 12px;
             }
             
             .header h1 {
-                font-size: 20px;
-            }
-            
-            .header h2 {
-                font-size: 14px;
+                font-size: 18px;
             }
             
             .content {
@@ -271,18 +280,11 @@
             }
             
             .service-card {
-                padding: 15px 12px;
+                padding: 12px;
             }
             
             .service-card i {
-                font-size: 28px;
-            }
-        }
-
-        /* Prevenir zoom em inputs no iOS */
-        @media screen and (max-width: 767px) {
-            input, select, textarea {
-                font-size: 16px !important;
+                font-size: 20px;
             }
         }
     </style>
@@ -306,27 +308,35 @@
             
             <div class="services-grid">
                 <div class="service-card" onclick="openService('manutencao')">
-                    <i class="fas fa-tools"></i>
-                    <h4>Solicitação de Manutenção</h4>
+                    <div class="service-card-header">
+                        <i class="fas fa-tools"></i>
+                        <h4>Solicitação de Manutenção</h4>
+                    </div>
                     <p>Abra uma nova solicitação de manutenção corretiva ou preventiva</p>
                 </div>
                 
+                <div class="service-card" onclick="openService('calendario')">
+                    <div class="service-card-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h4>Agenda de Manutenção</h4>
+                    </div>
+                    <p>Planejamento e acompanhamento de atividades programadas</p>
+                </div>
+                
                 <div class="service-card" onclick="openService('relatorios')">
-                    <i class="fas fa-chart-bar"></i>
-                    <h4>Relatórios e Análises</h4>
+                    <div class="service-card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h4>Relatórios e Análises</h4>
+                    </div>
                     <p>Consulte relatórios de desempenho e métricas de manutenção</p>
                 </div>
                 
                 <div class="service-card" onclick="openService('estoque')">
-                    <i class="fas fa-boxes"></i>
-                    <h4>Gestão de Estoques</h4>
+                    <div class="service-card-header">
+                        <i class="fas fa-boxes"></i>
+                        <h4>Gestão de Estoques</h4>
+                    </div>
                     <p>Controle de peças, materiais e inventário técnico</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('calendario')">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h4>Agenda de Manutenção</h4>
-                    <p>Planejamento e acompanhamento de atividades programadas</p>
                 </div>
             </div>
             
@@ -344,7 +354,7 @@
             
             <div class="system-info">
                 <p><strong>Sistema de Gestão de Manutenção Industrial v2.1.4</strong></p>
-                <p>Status: <span style="color: #28a745; font-weight: bold;">● ONLINE</span></p>
+                <p>Status: <span class="status-online">● ONLINE</span></p>
             </div>
         </div>
     </div>
@@ -369,16 +379,14 @@
             }
         }
         
-        // Função para abrir serviços (placeholder)
+        // Função para abrir serviços
         function openService(serviceType) {
             const usuario = getUrlParameter('usuario');
-            const userParam = usuario ? `?usuario=${usuario}` : '';
             
             switch(serviceType) {
                 case 'manutencao':
                     alert('🔧 Funcionalidade de Solicitação de Manutenção\n\nUsuário: ' + 
-                          (usuario ? decodeURIComponent(usuario) : 'Não identificado') + 
-                          '\n\nEsta funcionalidade será implementada em breve.');
+                          (usuario ? decodeURIComponent(usuario) : 'Não identificado'));
                     break;
                 case 'relatorios':
                     alert('📊 Módulo de Relatórios em desenvolvimento');
