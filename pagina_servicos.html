@@ -156,6 +156,14 @@
         .btn-logout:hover {
             background: #5a6268;
         }
+
+        .btn-uol {
+            background: #ff6b00;
+        }
+        
+        .btn-uol:hover {
+            background: #e55a00;
+        }
         
         .system-info {
             margin-top: 30px;
@@ -167,56 +175,28 @@
         }
         
         @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            
-            .container {
-                border-radius: 10px;
-            }
-            
-            .header {
-                padding: 20px 15px;
-            }
-            
             .header h1 {
-                font-size: 22px;
-            }
-            
-            .header h2 {
-                font-size: 16px;
+                font-size: 24px;
             }
             
             .user-info {
                 position: static;
                 margin-top: 15px;
-                display: inline-block;
-            }
-            
-            .content {
-                padding: 20px;
             }
             
             .services-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .service-card {
-                padding: 20px;
             }
             
             .quick-actions {
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
             }
             
             .action-btn {
                 width: 100%;
                 max-width: 300px;
                 justify-content: center;
-                padding: 14px 20px;
             }
         }
     </style>
@@ -271,6 +251,9 @@
                 <button class="action-btn" onclick="openService('dashboard')">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </button>
+                <button class="action-btn btn-uol" onclick="openUOL()">
+                    <i class="fas fa-external-link-alt"></i> Acessar UOL
+                </button>
                 <a href="https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec" class="action-btn btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Sair do Sistema
                 </a>
@@ -303,14 +286,16 @@
             }
         }
         
-        // Função para abrir serviços
+        // Função para abrir serviços (placeholder)
         function openService(serviceType) {
             const usuario = getUrlParameter('usuario');
+            const userParam = usuario ? `?usuario=${usuario}` : '';
             
             switch(serviceType) {
                 case 'manutencao':
                     alert('🔧 Funcionalidade de Solicitação de Manutenção\n\nUsuário: ' + 
-                          (usuario ? decodeURIComponent(usuario) : 'Não identificado'));
+                          (usuario ? decodeURIComponent(usuario) : 'Não identificado') + 
+                          '\n\nEsta funcionalidade será implementada em breve.');
                     break;
                 case 'relatorios':
                     alert('📊 Módulo de Relatórios em desenvolvimento');
@@ -325,6 +310,11 @@
                     alert('📈 Dashboard de Métricas em desenvolvimento');
                     break;
             }
+        }
+
+        // Função para abrir o UOL na mesma aba
+        function openUOL() {
+            window.location.href = 'https://www.uol.com.br';
         }
         
         // Inicializar a página
