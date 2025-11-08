@@ -104,6 +104,45 @@
             font-size: 12px;
             color: #666;
         }
+
+        /* Modal de confirmação */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-confirm {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -119,12 +158,29 @@
                 <div class="user-name" id="currentUser">Carregando...</div>
             </div>
             
-            <button class="action-btn" onclick="openTestPage()">
+            <button class="action-btn" onclick="confirmOpenTestPage()">
                 <i class="fas fa-external-link-alt"></i> Abrir Página de Teste
             </button>
             
             <div class="system-info">
                 <p><strong>Sistema de Gestão v2.1.4</strong> | Status: <span style="color: #28a745;">● ONLINE</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar Ação</h3>
+            <p>A página atual será fechada e a página de teste será aberta em uma nova aba.</p>
+            <p>Deseja continuar?</p>
+            <div class="modal-buttons">
+                <button class="action-btn btn-confirm" onclick="openTestPage()">
+                    Sim, Continuar
+                </button>
+                <button class="action-btn btn-cancel" onclick="closeModal()">
+                    Cancelar
+                </button>
             </div>
         </div>
     </div>
@@ -145,14 +201,34 @@
                 userDisplay.textContent = decodedUser;
             }
         }
+
+        // Modal functions
+        function confirmOpenTestPage() {
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
         
-        // Função para abrir a página teste.html em nova aba
+        // Função para abrir a página teste.html em nova aba e FECHAR a atual
         function openTestPage() {
             const usuario = getUrlParameter('usuario');
             if (usuario) {
                 // Abrir em NOVA ABA com o parâmetro do usuário
                 const testPageUrl = `teste.html?usuario=${usuario}`;
-                window.open(testPageUrl, '_blank');
+                const newWindow = window.open(testPageUrl, '_blank');
+                
+                // Fechar a janela/aba atual APÓS abrir a nova
+                if (newWindow) {
+                    // Pequeno delay para garantir que a nova aba abriu
+                    setTimeout(() => {
+                        window.close(); // Fecha a aba atual
+                    }, 100);
+                } else {
+                    // Fallback se a nova janela não abrir
+                    alert('Não foi possível abrir a nova página. Verifique se o popup está bloqueado.');
+                }
             } else {
                 alert('Usuário não identificado!');
             }
@@ -160,6 +236,14 @@
         
         // Inicializar a página
         document.addEventListener('DOMContentLoaded', loadUserInfo);
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
     </script>
 </body>
 </html>
