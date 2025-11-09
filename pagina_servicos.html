@@ -68,6 +68,13 @@
             font-size: 16px;
             font-weight: 600;
             color: #2c5c8a;
+            margin-bottom: 5px;
+        }
+        
+        .user-setor {
+            font-size: 14px;
+            color: #2c5c8a;
+            font-weight: 500;
         }
         
         .welcome-message {
@@ -235,7 +242,8 @@
         
         <div class="content">
             <div class="user-info">
-                <div class="user-name" id="currentUser">Carregando...</div>
+                <div class="user-name" id="userName">Carregando...</div>
+                <div class="user-setor" id="userSetor"></div>
             </div>
 
             <div class="welcome-message">
@@ -281,12 +289,14 @@
             const setor = getUrlParameter('setor');
             
             if (usuario) {
-                const userDisplay = document.getElementById('currentUser');
+                const userNameDisplay = document.getElementById('userName');
+                const userSetorDisplay = document.getElementById('userSetor');
                 const decodedUser = decodeURIComponent(usuario);
                 const decodedSetor = setor ? decodeURIComponent(setor) : 'Não definido';
                 
-                // Formato correto: apenas nome e setor na mesma linha, sem parênteses
-                userDisplay.textContent = `${decodedUser} ${decodedSetor}`;
+                // Nome em uma linha, setor em outra
+                userNameDisplay.textContent = decodedUser;
+                userSetorDisplay.textContent = decodedSetor;
                 
                 // Configurar o link com o usuário E setor
                 const testPageLink = document.getElementById('testPageLink');
