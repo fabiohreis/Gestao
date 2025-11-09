@@ -61,19 +61,14 @@
             border-radius: 8px;
             margin-bottom: 25px;
             border-left: 4px solid #1a3a5f;
-            text-align: left;
-        }
-        
-        .user-info h3 {
-            color: #1a3a5f;
-            margin-bottom: 5px;
-            font-size: 14px;
+            text-align: center;
         }
         
         .user-name {
             font-size: 18px;
             font-weight: 600;
             color: #2c5c8a;
+            line-height: 1.4;
         }
         
         .welcome-message {
@@ -246,7 +241,6 @@
         
         <div class="content">
             <div class="user-info">
-                <h3>Usuário Logado:</h3>
                 <div class="user-name" id="currentUser">Carregando...</div>
             </div>
 
@@ -297,8 +291,8 @@
                 const decodedUser = decodeURIComponent(usuario);
                 const decodedSetor = setor ? decodeURIComponent(setor) : 'Não definido';
                 
-                // Exibir usuário e setor
-                userDisplay.textContent = `${decodedUser} (${decodedSetor})`;
+                // Exibir apenas nome e setor, sem "Usuário Logado:" e sem parênteses
+                userDisplay.innerHTML = `${decodedUser}<br>${decodedSetor}`;
                 
                 // Configurar o link com o usuário E setor
                 const testPageLink = document.getElementById('testPageLink');
