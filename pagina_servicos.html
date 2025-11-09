@@ -302,10 +302,14 @@
                 
                 // Configurar o link com base no setor
                 const dashboardLink = document.getElementById('dashboardLink');
-                if (decodedSetor.toLowerCase() === 'gestão') {
+                const setorLower = decodedSetor.toLowerCase();
+                
+                if (setorLower === 'gestão' || setorLower === 'gestao') {
                     dashboardLink.href = `gest.html?usuario=${usuario}&setor=${setor}`;
-                } else if (decodedSetor.toLowerCase() === 'manutenção') {
+                } else if (setorLower === 'manutenção' || setorLower === 'manutencao') {
                     dashboardLink.href = `manut.html?usuario=${usuario}&setor=${setor}`;
+                } else if (setorLower === 'planejamento') {
+                    dashboardLink.href = `planejamento.html?usuario=${usuario}&setor=${setor}`;
                 } else {
                     // Fallback para página padrão
                     dashboardLink.href = `teste.html?usuario=${usuario}&setor=${setor}`;
