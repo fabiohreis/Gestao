@@ -3,304 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Manutenção Industrial - Serviços</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Página de Teste</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background: linear-gradient(135deg, #1a3a5f 0%, #2c5c8a 100%);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
             padding: 20px;
-            color: #333;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
-            overflow: hidden;
         }
-        
-        .header {
-            background: #1a3a5f;
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        .header h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            font-weight: 500;
-            opacity: 0.9;
-        }
-        
         .user-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            padding: 10px 15px;
+            background: #f0f8ff;
+            padding: 15px;
             border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #e8f4fd;
-            border-radius: 10px;
+            margin-bottom: 20px;
             border-left: 4px solid #1a3a5f;
-        }
-        
-        .welcome-section h3 {
-            color: #1a3a5f;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .service-card {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-color: #1a3a5f;
-        }
-        
-        .service-card i {
-            font-size: 40px;
-            color: #1a3a5f;
-            margin-bottom: 15px;
-        }
-        
-        .service-card h4 {
-            color: #1a3a5f;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        
-        .service-card p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .quick-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        
-        .action-btn {
-            background: #1a3a5f;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .action-btn:hover {
-            background: #2c5c8a;
-            transform: translateY(-2px);
-        }
-        
-        .btn-logout {
-            background: #6c757d;
-        }
-        
-        .btn-logout:hover {
-            background: #5a6268;
-        }
-        
-        .system-info {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            text-align: center;
-            border-top: 3px solid #1a3a5f;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .user-info {
-                position: static;
-                margin-top: 15px;
-            }
-            
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .action-btn {
-                width: 100%;
-                max-width: 300px;
-                justify-content: center;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>MANUTENÇÃO INDUSTRIAL</h1>
-            <h2>SISTEMA DE GESTÃO - PAINEL DE SERVIÇOS</h2>
-            <div class="user-info">
-                <i class="fas fa-user"></i>
-                <span id="currentUser">Usuário</span>
-            </div>
-        </div>
-        
-        <div class="content">
-            <div class="welcome-section">
-                <h3 id="welcomeTitle">Bem-vindo ao Sistema</h3>
-                <p>Selecione uma das opções abaixo para gerenciar as atividades de manutenção</p>
-            </div>
-            
-            <div class="services-grid">
-                <div class="service-card" onclick="openService('manutencao')">
-                    <i class="fas fa-tools"></i>
-                    <h4>Solicitação de Manutenção</h4>
-                    <p>Abra uma nova solicitação de manutenção corretiva ou preventiva</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('relatorios')">
-                    <i class="fas fa-chart-bar"></i>
-                    <h4>Relatórios e Análises</h4>
-                    <p>Consulte relatórios de desempenho e métricas de manutenção</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('estoque')">
-                    <i class="fas fa-boxes"></i>
-                    <h4>Gestão de Estoques</h4>
-                    <p>Controle de peças, materiais e inventário técnico</p>
-                </div>
-                
-                <div class="service-card" onclick="openService('calendario')">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h4>Agenda de Manutenção</h4>
-                    <p>Planejamento e acompanhamento de atividades programadas</p>
-                </div>
-            </div>
-            
-            <div class="quick-actions">
-                <button class="action-btn" onclick="openService('manutencao')">
-                    <i class="fas fa-plus"></i> Nova Solicitação
-                </button>
-                <button class="action-btn" onclick="openService('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </button>
-                <a href="https://script.google.com/macros/s/AKfycbyeutOfCl36qVb3qXT30vfd5Yeo_VVVMcKpazTXaoXZ8FP1xE-i4acEBaNqtz6fuDVDyA/exec" class="action-btn btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Sair do Sistema
-                </a>
-            </div>
-            
-            <div class="system-info">
-                <p><strong>Sistema de Gestão de Manutenção Industrial v2.1.4</strong></p>
-                <p>Status: <span style="color: #28a745; font-weight: bold;">● ONLINE</span></p>
-            </div>
-        </div>
+    <h1>Página de Teste</h1>
+    
+    <div class="user-info">
+        <h3>Informações do Usuário:</h3>
+        <p><strong>Nome:</strong> <span id="userName">Carregando...</span></p>
+        <p><strong>Setor:</strong> <span id="userSetor">Carregando...</span></p>
     </div>
 
+    <p>Esta é uma página de teste para demonstrar o fluxo de informações.</p>
+
     <script>
-        // Obter parâmetro do usuário da URL
+        // Obter parâmetro da URL
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
-        
+
         // Carregar informações do usuário
         function loadUserInfo() {
             const usuario = getUrlParameter('usuario');
-            if (usuario) {
-                const userDisplay = document.getElementById('currentUser');
-                const welcomeTitle = document.getElementById('welcomeTitle');
-                
-                const decodedUser = decodeURIComponent(usuario);
-                userDisplay.textContent = decodedUser;
-                welcomeTitle.textContent = `Bem-vindo, ${decodedUser}!`;
-            }
-        }
-        
-        // Função para abrir serviços (placeholder)
-        function openService(serviceType) {
-            const usuario = getUrlParameter('usuario');
-            const userParam = usuario ? `?usuario=${usuario}` : '';
+            const setor = getUrlParameter('setor');
             
-            switch(serviceType) {
-                case 'manutencao':
-                    alert('🔧 Funcionalidade de Solicitação de Manutenção\n\nUsuário: ' + 
-                          (usuario ? decodeURIComponent(usuario) : 'Não identificado') + 
-                          '\n\nEsta funcionalidade será implementada em breve.');
-                    break;
-                case 'relatorios':
-                    alert('📊 Módulo de Relatórios em desenvolvimento');
-                    break;
-                case 'estoque':
-                    alert('📦 Sistema de Gestão de Estoques em desenvolvimento');
-                    break;
-                case 'calendario':
-                    alert('📅 Agenda de Manutenção em desenvolvimento');
-                    break;
-                case 'dashboard':
-                    alert('📈 Dashboard de Métricas em desenvolvimento');
-                    break;
+            if (usuario) {
+                const decodedUser = decodeURIComponent(usuario);
+                const decodedSetor = setor ? decodeURIComponent(setor) : 'Não definido';
+                
+                document.getElementById('userName').textContent = decodedUser;
+                document.getElementById('userSetor').textContent = decodedSetor;
             }
         }
-        
+
         // Inicializar a página
         document.addEventListener('DOMContentLoaded', loadUserInfo);
     </script>
