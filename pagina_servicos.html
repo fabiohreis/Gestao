@@ -258,8 +258,8 @@
             </div>
             
             <div class="button-group">
-                <!-- LINK REAL que funciona no iOS -->
-                <a id="testPageLink" href="#" target="_blank" class="btn-link">
+                <!-- LINK que redireciona para a página correta baseada no setor -->
+                <a id="dashboardLink" href="#" target="_blank" class="btn-link">
                     <i class="fas fa-external-link-alt"></i> Abrir Dashboard
                 </a>
                 
@@ -300,9 +300,16 @@
                 userNameDisplay.textContent = decodedUser;
                 userSetorDisplay.textContent = decodedSetor;
                 
-                // Configurar o link com o usuário E setor
-                const testPageLink = document.getElementById('testPageLink');
-                testPageLink.href = `teste.html?usuario=${usuario}&setor=${setor}`;
+                // Configurar o link com base no setor
+                const dashboardLink = document.getElementById('dashboardLink');
+                if (decodedSetor.toLowerCase() === 'gestão') {
+                    dashboardLink.href = `gest.html?usuario=${usuario}&setor=${setor}`;
+                } else if (decodedSetor.toLowerCase() === 'manutenção') {
+                    dashboardLink.href = `manut.html?usuario=${usuario}&setor=${setor}`;
+                } else {
+                    // Fallback para página padrão
+                    dashboardLink.href = `teste.html?usuario=${usuario}&setor=${setor}`;
+                }
             }
         }
 
