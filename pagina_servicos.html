@@ -61,17 +61,30 @@
             border-radius: 8px;
             margin-bottom: 25px;
             border-left: 4px solid #1a3a5f;
+            text-align: left;
         }
         
         .user-info h3 {
             color: #1a3a5f;
             margin-bottom: 5px;
+            font-size: 14px;
         }
         
         .user-name {
             font-size: 18px;
             font-weight: 600;
             color: #2c5c8a;
+        }
+        
+        .welcome-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #28a745;
+            font-weight: 500;
+            text-align: center;
         }
         
         .action-btn {
@@ -89,6 +102,8 @@
             align-items: center;
             gap: 10px;
             margin: 10px 5px;
+            width: 100%;
+            justify-content: center;
         }
         
         .action-btn:hover {
@@ -97,7 +112,7 @@
         }
 
         .btn-link {
-            background: #1a3a5f;
+            background: #28a745;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -111,19 +126,21 @@
             align-items: center;
             gap: 10px;
             margin: 10px 5px;
+            width: 100%;
+            justify-content: center;
         }
 
         .btn-link:hover {
-            background: #2c5c8a;
+            background: #218838;
             transform: translateY(-2px);
         }
 
         .btn-close {
-            background: #6c757d;
+            background: #dc3545;
         }
         
         .btn-close:hover {
-            background: #5a6268;
+            background: #c82333;
         }
         
         .system-info {
@@ -133,6 +150,7 @@
             border-radius: 8px;
             font-size: 12px;
             color: #666;
+            border-top: 1px solid #dee2e6;
         }
 
         .info-message {
@@ -143,18 +161,79 @@
             margin: 15px 0;
             font-size: 14px;
             color: #856404;
+            text-align: left;
         }
 
         .button-group {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             justify-content: center;
-            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-top: 3px;
+            transform: scale(1.2);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .online-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         /* Esconder o link real */
         .hidden-link {
             display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .action-btn, .btn-link {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
@@ -171,15 +250,19 @@
                 <div class="user-name" id="currentUser">Carregando...</div>
             </div>
 
-            <div class="info-message">
-                <i class="fas fa-info-circle"></i>
-                Clique no botão abaixo para abrir a página de teste em uma nova aba.
+            <div class="welcome-message">
+                <i class="fas fa-check-circle"></i> Bem vindo de volta!
+            </div>
+
+            <div class="checkbox-item">
+                <input type="checkbox" id="instructionCheck" checked disabled>
+                <label for="instructionCheck">Clique no botão abaixo para abrir a página de teste em uma nova aba.</label>
             </div>
             
             <div class="button-group">
                 <!-- LINK REAL que funciona no iOS -->
                 <a id="testPageLink" href="#" target="_blank" class="btn-link">
-                    <i class="fas fa-external-link-alt"></i> Abrir Página de Teste
+                    <i class="fas fa-external-link-alt"></i> Abrir Dashboard
                 </a>
                 
                 <button class="action-btn btn-close" onclick="closePage()">
@@ -188,7 +271,11 @@
             </div>
             
             <div class="system-info">
-                <p><strong>Sistema de Gestão v2.1.4</strong> | Status: <span style="color: #28a745;">● ONLINE</span></p>
+                <p><strong>Sistema de Gestão v2.1.4</strong> | Status: 
+                    <span class="status-indicator">
+                        <span class="online-dot"></span> ONLINE
+                    </span>
+                </p>
             </div>
         </div>
     </div>
@@ -210,7 +297,7 @@
                 const decodedUser = decodeURIComponent(usuario);
                 const decodedSetor = setor ? decodeURIComponent(setor) : 'Não definido';
                 
-                // NOVO: Exibir usuário e setor
+                // Exibir usuário e setor
                 userDisplay.textContent = `${decodedUser} (${decodedSetor})`;
                 
                 // Configurar o link com o usuário E setor
