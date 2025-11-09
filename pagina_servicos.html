@@ -65,10 +65,9 @@
         }
         
         .user-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #2c5c8a;
-            line-height: 1.4;
         }
         
         .welcome-message {
@@ -202,11 +201,6 @@
             100% { opacity: 1; }
         }
 
-        /* Esconder o link real */
-        .hidden-link {
-            display: none;
-        }
-
         @media (max-width: 480px) {
             .container {
                 max-width: 100%;
@@ -291,8 +285,8 @@
                 const decodedUser = decodeURIComponent(usuario);
                 const decodedSetor = setor ? decodeURIComponent(setor) : 'Não definido';
                 
-                // Exibir apenas nome e setor, sem "Usuário Logado:" e sem parênteses
-                userDisplay.innerHTML = `${decodedUser}<br>${decodedSetor}`;
+                // Formato correto: apenas nome e setor na mesma linha, sem parênteses
+                userDisplay.textContent = `${decodedUser} ${decodedSetor}`;
                 
                 // Configurar o link com o usuário E setor
                 const testPageLink = document.getElementById('testPageLink');
