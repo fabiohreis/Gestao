@@ -194,7 +194,7 @@
     </div>
 
     <script>
-        // Obter parâmetro do usuário da URL
+        // Obter parâmetro da URL
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
@@ -203,14 +203,19 @@
         // Carregar informações do usuário
         function loadUserInfo() {
             const usuario = getUrlParameter('usuario');
+            const setor = getUrlParameter('setor');
+            
             if (usuario) {
                 const userDisplay = document.getElementById('currentUser');
                 const decodedUser = decodeURIComponent(usuario);
-                userDisplay.textContent = decodedUser;
+                const decodedSetor = setor ? decodeURIComponent(setor) : 'Não definido';
                 
-                // Configurar o link com o usuário
+                // NOVO: Exibir usuário e setor
+                userDisplay.textContent = `${decodedUser} (${decodedSetor})`;
+                
+                // Configurar o link com o usuário E setor
                 const testPageLink = document.getElementById('testPageLink');
-                testPageLink.href = `teste.html?usuario=${usuario}`;
+                testPageLink.href = `teste.html?usuario=${usuario}&setor=${setor}`;
             }
         }
 
