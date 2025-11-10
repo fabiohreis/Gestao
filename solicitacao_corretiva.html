@@ -352,6 +352,21 @@
       white-space: nowrap;
     }
 
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 768px) {
       .industrial-container {
         padding: 25px 20px;
@@ -442,7 +457,7 @@
               <div class="setores-area">
                 <div class="setores-grid" id="setoresGrid">
                   <div class="setor-badge empty">
-                    Carregando...
+                    <span class="loading-spinner"></span>Carregando...
                   </div>
                 </div>
               </div>
@@ -458,8 +473,8 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">TAG do Equipamento *</label>
-              <select id="tag" class="form-select" required>
-                <option value="">Selecione o equipamento...</option>
+              <select id="tag" class="form-select" required disabled>
+                <option value="">Carregando equipamentos...</option>
               </select>
               <div class="form-text text-muted mt-2">
                 <small><i class="fa-solid fa-info-circle me-1"></i>Equipamentos não operantes aparecem desabilitados</small>
@@ -537,7 +552,7 @@
             <i class="fa-solid fa-paper-plane"></i>
             Enviar Solicitação
           </div>
-          <button type="submit" class="btn-industrial">
+          <button type="submit" class="btn-industrial" id="btnEnviar">
             <i class="fa-solid fa-paper-plane me-2"></i>Enviar Solicitação
           </button>
         </div>
@@ -578,6 +593,7 @@
     let mapaNomeSetores = new Map(); 
     let equipamentos = [];
     let requisitanteSelecionado = '';
+    let carregamentoConcluido = false;
 
     // === CAPTURA PARÂMETRO DA URL ===
     function obterParametroURL(nome) {
@@ -602,38 +618,60 @@
             // Atualiza a interface para mostrar o requisitante fixo
             document.getElementById('requisitante').innerHTML = `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
 
-            // Carrega os Setores
-            const resSetores = await fetch(`${urlBase}?aba=Setores`);
-            const jsonSetores = await resSetores.json();
+            // Mostra indicador de carregamento nos equipamentos
+            const selectTag = document.getElementById('tag');
+            selectTag.innerHTML = '<option value="">Carregando equipamentos...</option>';
+            selectTag.disabled = true;
 
-            if (jsonSetores.status === 'ok' && Array.isArray(jsonSetores.data)) {
-                jsonSetores.data.forEach(reg => {
-                    if (!mapaNomeSetores.has(reg.nome)) mapaNomeSetores.set(reg.nome, []);
-                    mapaNomeSetores.get(reg.nome).push(reg.setor);
-                });
+            // Desabilita o botão de envio durante o carregamento
+            document.getElementById('btnEnviar').disabled = true;
 
-                // Verifica se o requisitante existe nos dados
-                if (mapaNomeSetores.has(requisitanteSelecionado)) {
-                    const setores = mapaNomeSetores.get(requisitanteSelecionado);
-                    atualizarSetoresRequisitante(setores);
-                    atualizarProgresso(2);
-                } else {
-                    document.getElementById('setoresGrid').innerHTML = '<div class="setor-badge empty">Nenhum setor vinculado</div>';
-                    mostrarMensagem('erro', 'Requisitante não encontrado na base de dados.');
-                }
+            // Carrega os Setores e Equipamentos em paralelo
+            await Promise.all([carregarSetores(), carregarEquipamentos()]);
+
+            // Verifica se o requisitante existe nos dados
+            if (mapaNomeSetores.has(requisitanteSelecionado)) {
+                const setores = mapaNomeSetores.get(requisitanteSelecionado);
+                atualizarSetoresRequisitante(setores);
+                carregarEquipamentosPorSetores(setores);
+            } else {
+                document.getElementById('setoresGrid').innerHTML = '<div class="setor-badge empty">Nenhum setor vinculado</div>';
+                mostrarMensagem('erro', 'Requisitante não encontrado na base de dados.');
+                selectTag.innerHTML = '<option value="">Nenhum equipamento disponível</option>';
+                selectTag.disabled = true;
             }
 
-            // Carrega os Equipamentos
-            const resEqp = await fetch(`${urlBase}?aba=Equipamentos`);
-            const jsonEqp = await resEqp.json();
-            
-            equipamentos = (jsonEqp.status === 'ok' && Array.isArray(jsonEqp.data)) ? jsonEqp.data : [];
-            
-            atualizarProgresso(1);
+            carregamentoConcluido = true;
+            document.getElementById('btnEnviar').disabled = false;
+            atualizarProgresso(2);
+
         } catch (e) {
             console.error('Erro ao carregar dados:', e);
             mostrarMensagem('erro', 'Erro ao carregar dados do sistema.');
+            document.getElementById('tag').innerHTML = '<option value="">Erro ao carregar equipamentos</option>';
+            document.getElementById('tag').disabled = true;
         }
+    }
+
+    // === CARREGA SETORES ===
+    async function carregarSetores() {
+        const resSetores = await fetch(`${urlBase}?aba=Setores`);
+        const jsonSetores = await resSetores.json();
+
+        if (jsonSetores.status === 'ok' && Array.isArray(jsonSetores.data)) {
+            jsonSetores.data.forEach(reg => {
+                if (!mapaNomeSetores.has(reg.nome)) mapaNomeSetores.set(reg.nome, []);
+                mapaNomeSetores.get(reg.nome).push(reg.setor);
+            });
+        }
+    }
+
+    // === CARREGA EQUIPAMENTOS ===
+    async function carregarEquipamentos() {
+        const resEqp = await fetch(`${urlBase}?aba=Equipamentos`);
+        const jsonEqp = await resEqp.json();
+        
+        equipamentos = (jsonEqp.status === 'ok' && Array.isArray(jsonEqp.data)) ? jsonEqp.data : [];
     }
 
     // === ATUALIZA SETORES DO REQUISITANTE ===
@@ -648,7 +686,6 @@
                 badge.textContent = setor;
                 setoresGrid.appendChild(badge);
             });
-            carregarEquipamentosPorSetores(setores);
         } else {
             const emptyBadge = document.createElement('div');
             emptyBadge.className = 'setor-badge empty';
@@ -677,33 +714,42 @@
     // === CARREGA EQUIPAMENTOS DOS SETORES VINCULADOS ===
     function carregarEquipamentosPorSetores(listaSetores) {
         const selectTag = document.getElementById('tag');
-        selectTag.innerHTML = '<option value="">Carregando equipamentos...</option>';
-
+        
         const equipamentosFiltrados = equipamentos.filter(eq =>
             listaSetores.includes(eq.setor)
         );
 
         selectTag.innerHTML = '<option value="">Selecione o equipamento...</option>';
         
-        equipamentosFiltrados.forEach(eq => {
-            const estaOperando = eq.status === 'Operando';
-            
+        if (equipamentosFiltrados.length === 0) {
             const opt = document.createElement('option');
-            opt.value = eq.tag;
-            
-            if (estaOperando) {
-                opt.textContent = `✅ ${eq.tag} - ${eq.equipamento}`;
-                opt.dataset.nomeEquip = eq.equipamento;
-                opt.dataset.operando = true;
-            } else {
-                opt.textContent = `❌ ${eq.tag} - ${eq.equipamento} (${eq.status || 'Não Operando'})`;
-                opt.dataset.nomeEquip = eq.equipamento;
-                opt.dataset.operando = false;
-                opt.disabled = true;
-            }
-            
+            opt.textContent = 'Nenhum equipamento encontrado nos setores vinculados';
+            opt.disabled = true;
             selectTag.appendChild(opt);
-        });
+        } else {
+            equipamentosFiltrados.forEach(eq => {
+                const estaOperando = eq.status === 'Operando';
+                
+                const opt = document.createElement('option');
+                opt.value = eq.tag;
+                
+                if (estaOperando) {
+                    opt.textContent = `✅ ${eq.tag} - ${eq.equipamento}`;
+                    opt.dataset.nomeEquip = eq.equipamento;
+                    opt.dataset.operando = true;
+                } else {
+                    opt.textContent = `❌ ${eq.tag} - ${eq.equipamento} (${eq.status || 'Não Operando'})`;
+                    opt.dataset.nomeEquip = eq.equipamento;
+                    opt.dataset.operando = false;
+                    opt.disabled = true;
+                }
+                
+                selectTag.appendChild(opt);
+            });
+        }
+
+        // Habilita o select após carregar os equipamentos
+        selectTag.disabled = false;
 
         document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
         document.getElementById('equipamentoTag').textContent = 'TAG: ---';
@@ -712,6 +758,8 @@
 
     // === QUANDO MUDA O TAG ===
     document.getElementById('tag').addEventListener('change', (e) => {
+        if (!carregamentoConcluido) return;
+        
         const opt = e.target.selectedOptions[0];
         const equipamentoCard = document.getElementById('equipamentoCard');
         
@@ -762,6 +810,11 @@
     document.getElementById('formSolicitacao').addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        if (!carregamentoConcluido) {
+            mostrarMensagem('erro', 'Aguarde o carregamento completo dos dados.');
+            return;
+        }
+
         const tagSelect = document.getElementById('tag');
         const optSelecionada = tagSelect.selectedOptions[0];
         
@@ -809,6 +862,7 @@
                 document.getElementById('equipamentoParado').checked = false;
                 document.getElementById('statusLabel').textContent = 'Equipamento está FUNCIONANDO';
                 document.getElementById('statusLabel').className = 'status-funcionando';
+                
                 // Recarrega os equipamentos (pode ser que o status do equipamento tenha mudado)
                 const setores = mapaNomeSetores.get(requisitanteSelecionado) || [];
                 carregarEquipamentosPorSetores(setores);
