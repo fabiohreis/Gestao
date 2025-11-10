@@ -228,6 +228,16 @@
                     </div>
                 </div>
                 
+                <div class="feature-card" onclick="openSolicitacaoCorretiva()">
+                    <div class="feature-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="feature-title">Solicitar Manutenção</div>
+                    <div class="feature-description">
+                        Abrir solicitação de manutenção corretiva para equipamentos
+                    </div>
+                </div>
+                
                 <div class="feature-card" onclick="openFeature('custos')">
                     <div class="feature-icon">
                         <i class="fas fa-dollar-sign"></i>
@@ -288,6 +298,15 @@
         
         function openFeature(feature) {
             alert(`Abrindo módulo: ${feature}\n\nEsta funcionalidade será implementada em breve.`);
+        }
+        
+        function openSolicitacaoCorretiva() {
+            const usuario = getUrlParameter('usuario');
+            if (usuario) {
+                window.location.href = `solicitacao_corretiva.html?requisitante=${encodeURIComponent(usuario)}`;
+            } else {
+                alert('Usuário não identificado. Não é possível abrir a solicitação.');
+            }
         }
         
         function logout() {
