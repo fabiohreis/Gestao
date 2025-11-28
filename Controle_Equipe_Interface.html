@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<title>Gestão de Equipe de Manutenção</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,sans-serif;background:#f3f4f6;color:#111827;}
+    .app{display:flex;min-height:100vh;}
+    .sidebar{width:280px;background:#111827;color:#e5e7eb;padding:1.5rem 1rem;display:flex;flex-direction:column;gap:1rem;}
+    .sidebar h1{font-size:1.25rem;font-weight:700;margin-bottom:.75rem;}
+    .subtitle{font-size:.8rem;color:#9ca3af;margin-bottom:1rem;}
+    .nav-links{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+    .nav-links li{padding:.6rem .9rem;border-radius:.5rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;font-size:.95rem;transition:.15s;}
+    .nav-links li:hover{background:#1f2937;}
+    .nav-links li.active{background:#2563eb;color:#fff;}
+    .content{flex:1;padding:1.5rem 2rem;display:flex;flex-direction:column;gap:1rem;}
+    header{display:flex;justify-content:space-between;align-items:center;}
+    header h2{font-size:1.4rem;font-weight:600;}
+    .status-badge{font-size:.8rem;padding:.2rem .5rem;border-radius:999px;background:#d1fae5;color:#065f46;}
+    .section{display:none;}
+    .section.active{display:block;}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .card{background:#fff;border-radius:.75rem;padding:1rem 1.1rem;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:.35rem;}
+    .card-title{font-size:.85rem;color:#6b7280;}
+    .card-value{font-size:1.4rem;font-weight:600;}
+    .card-foot{font-size:.75rem;color:#9ca3af;}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;gap:.5rem;flex-wrap:wrap;}
+    .actions{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+    h3.section-title{font-size:1.1rem;margin-bottom:.75rem;}
+    .btn{border:none;border-radius:.5rem;padding:.45rem .9rem;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;background:#2563eb;color:#fff;transition:.15s;}
+    .btn.secondary{background:#6b7280;}
+    .btn.danger{background:#dc2626;}
+    .btn:hover{background:#1d4ed8;}
+    .btn.secondary:hover{background:#4b5563;}
+    .btn.danger:hover{background:#b91c1c;}
+    .btn-sm{padding:.25rem .55rem;font-size:.75rem;}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem 1rem;margin-bottom:.75rem;}
+    .form-group{display:flex;flex-direction:column;gap:.25rem;font-size:.85rem;}
+    .form-group label{color:#4b5563;}
+    input,select,textarea{border-radius:.5rem;border:1px solid #d1d5db;padding:.4rem .6rem;font-size:.85rem;outline:none;}
+    textarea{resize:vertical;min-height:60px;}
+    input:focus,select:focus,textarea:focus{border-color:#2563eb;box-shadow:0 0 0 1px rgba(37,99,235,.15);}
+    table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    thead{background:#e5e7eb;}
+    th,td{padding:.45rem .5rem;text-align:left;border-bottom:1px solid #e5e7eb;}
+    th{font-weight:500;color:#4b5563;}
+    tbody tr:nth-child(even){background:#f9fafb;}
+    tbody tr:hover{background:#eef2ff;}
+    .badge{border-radius:999px;padding:.15rem .5rem;font-size:.7rem;display:inline-block;}
+    .badge.green{background:#dcfce7;color:#166534;}
+    .badge.red{background:#fee2e2;color:#b91c1c;}
+    .alert{position:fixed;top:1rem;right:1rem;padding:.7rem 1rem;border-radius:.75rem;font-size:.85rem;box-shadow:0 4px 12px rgba(0,0,0,.15);display:none;z-index:999;max-width:420px;}
+    .alert.show{display:block;}
+    .alert.success{background:#dcfce7;color:#14532d;}
+    .alert.error{background:#fee2e2;color:#7f1d1d;}
+    .alert.info{background:#dbeafe;color:#1d4ed8;}
+    .small-text{font-size:.75rem;color:#6b7280;}
+    .mt-3{margin-top:.75rem;}
+    .text-center{text-align:center;}
+    .text-muted{color:#9ca3af;}
+    .days-box{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.25rem;}
+    .days-box label{display:flex;align-items:center;gap:.25rem;background:#fff;border:1px solid #e5e7eb;border-radius:.5rem;padding:.25rem .5rem;cursor:pointer;}
+
+    .spinner{width:18px;height:18px;border:2px solid #d1d5db;border-top-color:#2563eb;border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div>
+<h1>Gestão de Equipe</h1>
+<div class="subtitle">PCM • Escalas • Jornada • Pausas • Férias • Turnos</div>
+</div>
+<ul class="nav-links">
+<li class="active" data-section="dashboard">📊 Painel</li>
+<li data-section="mantenedores">👥 Mantenedores</li>
+<li data-section="jornada">🗓️ Jornada Semanal</li>
+<li data-section="pausas">☕ Pausas por Turno</li>
+<li data-section="pausasMant">👤 Pausas por Mantenedor</li>
+<li data-section="escalas">📅 Escalas</li>
+<li data-section="ferias">🏖️ Férias / Licenças</li>
+<li data-section="turnos">⏰ Turnos</li>
+</ul>
+</aside>
+
+<main class="content">
+<header>
+<div>
+<h2>Controle de Equipe de Manutenção</h2>
+<div class="small-text text-muted">Integração com planilha <strong>Dados</strong>.</div>
+</div>
+<div class="status-badge" id="status-badge">Online • API Sheets</div>
+</header>
+
+<!-- DASHBOARD -->
+<section class="section active" id="dashboard">
+<h3 class="section-title">Visão Geral</h3>
+<div class="cards">
+<div class="card"><div class="card-title">Total de Mantenedores</div><div class="card-value" id="card-total-mantenedores">-</div><div class="card-foot">Equipe</div></div>
+<div class="card"><div class="card-title">Mantenedores Ativos</div><div class="card-value" id="card-mantenedores-ativos">-</div><div class="card-foot">ATIVOS=SIM</div></div>
+<div class="card"><div class="card-title">Turnos cadastrados</div><div class="card-value" id="card-total-turnos">-</div><div class="card-foot">TURNOS_BASE</div></div>
+<div class="card"><div class="card-title">Escalas Hoje</div><div class="card-value" id="card-escalas-hoje">-</div><div class="card-foot">ESCALAS_DIARIAS</div></div>
+</div>
+
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:1rem 0;"/>
+
+<h3 class="section-title">Capacidade da equipe por dia</h3>
+<p class="small-text text-muted">Selecione um dia para ver jornada + pausas + HH disponíveis.</p>
+
+<div class="section-header" style="margin-top:.5rem;">
+<div class="actions" id="dash-dias-semana">
+<button class="btn secondary btn-sm dash-dia" data-dia="2" type="button">Seg</button>
+<button class="btn secondary btn-sm dash-dia" data-dia="3" type="button">Ter</button>
+<button class="btn secondary btn-sm dash-dia" data-dia="4" type="button">Qua</button>
+<button class="btn secondary btn-sm dash-dia" data-dia="5" type="button">Qui</button>
+<button class="btn secondary btn-sm dash-dia" data-dia="6" type="button">Sex</button>
+<button class="btn secondary btn-sm dash-dia" data-dia="7" type="button">Sáb</button>
+<button class="btn secondary btn-sm dash-dia" data-dia="1" type="button">Dom</button>
+</div>
+<div class="actions">
+<div class="form-group" style="margin-bottom:0;min-width:160px;">
+<label class="small-text">Data</label>
+<input id="dash-data" type="date"/>
+</div>
+<button class="btn secondary btn-sm" id="btn-refresh-dash" type="button">🔄 Atualizar</button>
+</div>
+</div>
+
+<div class="cards mt-3" id="dash-cards-turno"></div>
+
+<div class="mt-3">
+<table>
+<thead>
+<tr>
+<th>Mantenedor</th>
+<th>Turno</th>
+<th>Jornada</th>
+<th>Pausas aplicadas</th>
+<th>HH disponíveis</th>
+</tr>
+</thead>
+<tbody id="dash-tabela-dia"></tbody>
+</table>
+</div>
+</section>
+
+<!-- MANTENEDORES -->
+<section class="section" id="mantenedores">
+<div class="section-header">
+<h3 class="section-title">Cadastro de Mantenedores</h3>
+<div class="actions">
+<button class="btn secondary" id="btn-refresh-mantenedores" type="button">🔄 Atualizar lista</button>
+</div>
+</div>
+<form id="form-mantenedor">
+<input id="mant-id" type="hidden"/>
+<div class="form-grid">
+<div class="form-group"><label>Nome</label><input id="mant-nome" required=""/></div>
+<div class="form-group"><label>Cargo / Função</label><input id="mant-cargo"/></div>
+<div class="form-group"><label>Telefone</label><input id="mant-telefone"/></div>
+<div class="form-group"><label>E-mail</label><input id="mant-email" type="email"/></div>
+<div class="form-group"><label>Especialidade</label><input id="mant-especialidade"/></div>
+<div class="form-group"><label>Ativo</label><select id="mant-ativo"><option>SIM</option><option>NAO</option></select></div>
+<div class="form-group" style="grid-column:1/-1;"><label>Observações</label><textarea id="mant-observacoes"></textarea></div>
+</div>
+<button class="btn" type="submit">💾 Salvar mantenedor</button>
+<button class="btn secondary" id="btn-limpar-mantenedor" type="button">🧹 Limpar</button>
+</form>
+<div class="mt-3">
+<table>
+<thead><tr><th>ID</th><th>Nome</th><th>Cargo</th><th>Especialidade</th><th>Telefone</th><th>E-mail</th><th>Ativo</th><th>Ações</th></tr></thead>
+<tbody id="tabela-mantenedores"></tbody>
+</table>
+</div>
+</section>
+
+<!-- JORNADA -->
+<section class="section" id="jornada">
+<div class="section-header">
+<h3 class="section-title">Jornada Semanal (Padrão)</h3>
+<div class="actions">
+<div class="form-group" style="margin-bottom:0;">
+<label class="small-text">Mantenedor</label>
+<select id="jor-mantenedor"></select>
+</div>
+<div class="form-group" style="margin-bottom:0;">
+<label class="small-text">Copiar jornada de...</label>
+<select id="jor-copiar-from"></select>
+</div>
+<button class="btn secondary" id="btn-copiar-jornada" type="button">📋 Copiar</button>
+<button class="btn secondary" id="btn-refresh-jornada" type="button">🔄 Atualizar</button>
+</div>
+</div>
+<p class="small-text text-muted">Marque os dias e salve em lote (aba <strong>JORNADA_SEMANAL</strong>).</p>
+<form id="form-jornada">
+<div class="form-grid">
+<div class="form-group" style="grid-column:1/-1;">
+<label>Dias da semana</label>
+<div class="days-box">
+<label><input class="jor-dia" type="checkbox" value="2"/>Seg</label>
+<label><input class="jor-dia" type="checkbox" value="3"/>Ter</label>
+<label><input class="jor-dia" type="checkbox" value="4"/>Qua</label>
+<label><input class="jor-dia" type="checkbox" value="5"/>Qui</label>
+<label><input class="jor-dia" type="checkbox" value="6"/>Sex</label>
+<label><input class="jor-dia" type="checkbox" value="7"/>Sáb</label>
+<label><input class="jor-dia" type="checkbox" value="1"/>Dom</label>
+</div>
+</div>
+<div class="form-group"><label>Turno</label><select id="jor-turno" required=""></select></div>
+<div class="form-group" style="display:flex;gap:.5rem;">
+<button class="btn secondary" id="btn-aplicar-segsex" type="button">✅ Aplicar 2ª–6ª</button>
+</div>
+<div class="form-group" style="grid-column:1/-1;"><label>Observações</label><textarea id="jor-obs"></textarea></div>
+</div>
+<div class="actions">
+<button class="btn" type="submit">💾 Salvar jornada (em lote)</button>
+<label class="small-text" style="display:flex;align-items:center;gap:.35rem;">
+<input checked="" id="jor-overwrite" type="checkbox"/>Substituir dias já cadastrados
+</label>
+</div>
+</form>
+<div class="mt-3">
+<table>
+<thead><tr><th>ID</th><th>Dia</th><th>Turno</th><th>Obs.</th><th>Ações</th></tr></thead>
+<tbody id="tabela-jornada"></tbody>
+</table>
+</div>
+</section>
+
+<!-- PAUSAS TURNO -->
+<section class="section" id="pausas">
+<div class="section-header">
+<h3 class="section-title">Pausas por Turno</h3>
+<div class="actions">
+<div class="form-group" style="margin-bottom:0;">
+<label class="small-text">Turno (filtro)</label>
+<select id="pau-turno-filtro"></select>
+</div>
+<button class="btn secondary" id="btn-refresh-pausas" type="button">🔄 Atualizar</button>
+</div>
+</div>
+<p class="small-text text-muted">Cadastre café/almoço/jantar etc. na aba <strong>PAUSAS_TURNO</strong>.</p>
+<form id="form-pausa">
+<input id="pau-id" type="hidden"/>
+<div class="form-grid">
+<div class="form-group"><label>Turno</label><select id="pau-turno" required=""></select></div>
+<div class="form-group"><label>Nome da pausa</label><input id="pau-nome" placeholder="Ex.: Almoço" required=""/></div>
+<div class="form-group"><label>Início</label><input id="pau-inicio" required="" type="time"/></div>
+<div class="form-group"><label>Fim</label><input id="pau-fim" required="" type="time"/></div>
+<div class="form-group" style="grid-column:1/-1;"><label>Observações</label><textarea id="pau-obs"></textarea></div>
+</div>
+<button class="btn" type="submit">💾 Salvar pausa</button>
+<button class="btn secondary" id="btn-limpar-pausa" type="button">🧹 Limpar</button>
+</form>
+<div class="mt-3">
+<table>
+<thead><tr><th>ID</th><th>Turno</th><th>Pausa</th><th>Início</th><th>Fim</th><th>Obs.</th><th>Ações</th></tr></thead>
+<tbody id="tabela-pausas"></tbody>
+</table>
+</div>
+</section>
+
+<!-- PAUSAS MANTENEDOR -->
+<section class="section" id="pausasMant">
+<div class="section-header">
+<h3 class="section-title">Pausas Fixas por Mantenedor</h3>
+<div class="actions">
+<div class="form-group" style="margin-bottom:0;">
+<label class="small-text">Mantenedor (filtro)</label>
+<select id="pm-mantenedor-filtro"></select>
+</div>
+<div class="form-group" style="margin-bottom:0;">
+<label class="small-text">Turno (opcional)</label>
+<select id="pm-turno-filtro"></select>
+</div>
+<button class="btn secondary" id="btn-refresh-pausasMant" type="button">🔄 Atualizar</button>
+</div>
+</div>
+<p class="small-text text-muted">
+Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba <strong>PAUSAS_MANTENEDOR</strong>)
+</p>
+<form id="form-pausaMant">
+<input id="pm-id" type="hidden"/>
+<div class="form-grid">
+<div class="form-group"><label>Mantenedor</label><select id="pm-mantenedor" required=""></select></div>
+<div class="form-group"><label>Turno (opcional)</label><select id="pm-turno"></select></div>
+<div class="form-group"><label>Nome da pausa</label><input id="pm-nome" placeholder="Ex.: Almoço" required=""/></div>
+<div class="form-group"><label>Início</label><input id="pm-inicio" required="" type="time"/></div>
+<div class="form-group"><label>Fim</label><input id="pm-fim" required="" type="time"/></div>
+<div class="form-group" style="grid-column:1/-1;"><label>Observações</label><textarea id="pm-obs"></textarea></div>
+</div>
+<button class="btn" type="submit">💾 Salvar pausa fixa</button>
+<button class="btn secondary" id="btn-limpar-pausaMant" type="button">🧹 Limpar</button>
+</form>
+<div class="mt-3">
+<table>
+<thead>
+<tr><th>ID</th><th>Mantenedor</th><th>Turno</th><th>Pausa</th><th>Início</th><th>Fim</th><th>Obs.</th><th>Ações</th></tr>
+</thead>
+<tbody id="tabela-pausasMant"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ESCALAS -->
+<section class="section" id="escalas">
+<div class="section-header">
+<h3 class="section-title">Escalas Diárias</h3>
+<div class="actions">
+<div class="form-group" style="margin-bottom:0;">
+<label class="small-text">Data</label>
+<input id="data-escalas" type="date"/>
+</div>
+<button class="btn secondary" id="btn-refresh-escalas" type="button">🔄 Atualizar</button>
+</div>
+</div>
+<form id="form-escala">
+<div class="form-grid">
+<div class="form-group"><label>Data</label><input id="esc-data" required="" type="date"/></div>
+<div class="form-group"><label>Mantenedor</label><select id="esc-mantenedor" required=""></select></div>
+<div class="form-group"><label>Turno</label><select id="esc-turno" required=""></select></div>
+<div class="form-group"><label>Tipo</label>
+<select id="esc-tipo"><option>Normal</option><option>Plantao</option><option>Extra</option><option>Cobertura</option></select>
+</div>
+<div class="form-group" style="grid-column:1/-1;"><label>Observações</label><textarea id="esc-observacoes"></textarea></div>
+</div>
+<button class="btn" type="submit">💾 Salvar escala</button>
+</form>
+<div class="mt-3">
+<table>
+<thead><tr><th>ID</th><th>Data</th><th>Mantenedor</th><th>Turno</th><th>Tipo</th><th>Obs.</th><th>Ações</th></tr></thead>
+<tbody id="tabela-escalas"></tbody>
+</table>
+</div>
+</section>
+
+<!-- FÉRIAS -->
+<section class="section" id="ferias">
+<div class="section-header">
+<h3 class="section-title">Férias e Licenças</h3>
+<div class="actions">
+<button class="btn secondary" id="btn-refresh-ferias" type="button">🔄 Atualizar</button>
+</div>
+</div>
+<form id="form-ferias">
+<input id="fer-id" type="hidden"/>
+<div class="form-grid">
+<div class="form-group"><label>Mantenedor</label><select id="fer-mantenedor" required=""></select></div>
+<div class="form-group"><label>Início</label><input id="fer-data-inicio" required="" type="date"/></div>
+<div class="form-group"><label>Fim</label><input id="fer-data-fim" required="" type="date"/></div>
+<div class="form-group"><label>Tipo</label>
+<select id="fer-tipo"><option>Ferias</option><option>Licenca</option><option>Atestado</option><option>Treinamento</option></select>
+</div>
+<div class="form-group" style="grid-column:1/-1;"><label>Observações</label><textarea id="fer-observacoes"></textarea></div>
+</div>
+<button class="btn" type="submit">💾 Salvar férias/licença</button>
+<button class="btn secondary" id="btn-limpar-ferias" type="button">🧹 Limpar</button>
+</form>
+<div class="mt-3">
+<table>
+<thead><tr><th>ID</th><th>Mantenedor</th><th>Início</th><th>Fim</th><th>Tipo</th><th>Obs.</th></tr></thead>
+<tbody id="tabela-ferias"></tbody>
+</table>
+</div>
+</section>
+
+<!-- TURNOS -->
+<section class="section" id="turnos">
+<div class="section-header">
+<h3 class="section-title">Turnos</h3>
+<div class="actions">
+<button class="btn secondary" id="btn-refresh-turnos" type="button">🔄 Atualizar</button>
+</div>
+</div>
+<form id="form-turno">
+<input id="turno-id" type="hidden"/>
+<div class="form-grid">
+<div class="form-group"><label>Nome do turno</label><input id="turno-nome" required=""/></div>
+<div class="form-group"><label>Início</label><input id="turno-inicio" required="" type="time"/></div>
+<div class="form-group"><label>Fim</label><input id="turno-fim" required="" type="time"/></div>
+<div class="form-group" style="grid-column:1/-1;"><label>Descrição</label><textarea id="turno-descricao"></textarea></div>
+</div>
+<button class="btn" type="submit">💾 Salvar turno</button>
+<button class="btn secondary" id="btn-limpar-turno" type="button">🧹 Limpar</button>
+</form>
+<div class="mt-3">
+<table>
+<thead><tr><th>ID</th><th>Nome</th><th>Início</th><th>Fim</th><th>Descrição</th><th>Ações</th></tr></thead>
+<tbody id="tabela-turnos"></tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+
+<div class="alert" id="app-alert"></div>
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.35);z-index:998;"></div>
+<div id="loading-modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:999;min-width:260px;display:flex;align-items:center;gap:12px;font-size:.9rem;">
+  <div aria-hidden="true" class="spinner"></div>
+  <div id="loading-text">Comunicação com planilha...</div>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbzylAmQA7EfCOPDRk_c0fKUoeZyvidTz37zyfm_IYJT1wJyMbntOEElbVNXb4Q8EkCO/exec";
+
+  let mantenedores=[], turnos=[], ferias=[], escalas=[], jornadas=[], pausas=[], pausasMant=[];
+  let pausasAll = [];
+  let pausasMantAll = [];
+
+  const jornadaCache = new Map();
+  async function getJornadaCached(idMantenedor){
+    const key = String(idMantenedor);
+    if(jornadaCache.has(key)) return jornadaCache.get(key);
+    const j = await apiCall('getJornadaMantenedor',{idMantenedor});
+    jornadaCache.set(key, j || []);
+    return j || [];
+  }
+
+  const $ = (id)=>document.getElementById(id);
+
+  function alertar(msg,tipo='info',tempo=3000){
+    const a=$('app-alert');
+    a.textContent=msg; a.className=`alert show ${tipo}`;
+    setTimeout(()=>a.className='alert', tempo);
+  }
+
+  function setLoading(on, text){
+    const ov = $('loading-overlay');
+    const md = $('loading-modal');
+    if(!ov || !md) return;
+    if(text) $('loading-text').textContent = text;
+    ov.style.display = on ? 'block' : 'none';
+    md.style.display = on ? 'flex' : 'none';
+  }
+
+  // ===== NOVO: wrapper universal de loading para QUALQUER ação =====
+  async function runWithLoading(message, fn){
+    try{
+      setLoading(true, message || 'Processando...');
+      return await fn();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function apiCall(action, data=null, method='GET'){
+    const url=new URL(API_URL);
+    url.searchParams.append('action', action);
+    const opt={method};
+
+    if(method==='GET' && data){
+      Object.keys(data).forEach(k=>url.searchParams.append(k,data[k]));
+    }
+
+    if(method==='POST'){
+      const params=new URLSearchParams();
+      params.append('payload', JSON.stringify(data||{}));
+      opt.headers={'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'};
+      opt.body=params.toString();
+    }
+
+    const res=await fetch(url.toString(), opt);
+    const json=await res.json();
+    if(json && json.error) throw new Error(json.error);
+    return json;
+  }
+
+  function showSection(id){
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    $(id).classList.add('active');
+
+    document.querySelectorAll('.nav-links li').forEach(li=>li.classList.remove('active'));
+    document.querySelector(`.nav-links li[data-section="${id}"]`).classList.add('active');
+
+    // carrega quando abrir a aba (com loading)
+    if(id==='dashboard') runWithLoading('Carregando Painel...', carregarPainelDia);
+    if(id==='mantenedores') runWithLoading('Carregando mantenedores...', carregarMantenedoresTabela);
+    if(id==='turnos') runWithLoading('Carregando turnos...', carregarTurnosTabela);
+    if(id==='escalas') runWithLoading('Carregando escalas...', carregarEscalasData);
+    if(id==='ferias') runWithLoading('Carregando férias/licenças...', carregarFeriasTabela);
+    if(id==='jornada') runWithLoading('Carregando jornada semanal...', carregarJornadaMantenedor);
+    if(id==='pausas') runWithLoading('Carregando pausas do turno...', carregarPausasTurno);
+    if(id==='pausasMant') runWithLoading('Carregando pausas fixas...', carregarPausasMantenedor);
+  }
+
+  const hojeISO=()=>new Date().toISOString().slice(0,10);
+  const diaNome={1:'Dom',2:'Seg',3:'Ter',4:'Qua',5:'Qui',6:'Sex',7:'Sáb'};
+
+  function preencherSelectsMantenedores(){
+    const ativos=mantenedores.filter(m=>m.ativo==='SIM');
+    const ids=['esc-mantenedor','fer-mantenedor','pm-mantenedor','pm-mantenedor-filtro','jor-mantenedor','jor-copiar-from'];
+    ids.forEach(id=>{
+      const sel=$(id); if(!sel) return;
+      const v=sel.value;
+      sel.innerHTML=`<option value="">Selecione...</option>`;
+      ativos.forEach(m=>sel.insertAdjacentHTML('beforeend',`<option value="${m.id}">${m.nome}</option>`));
+      sel.value=v;
+    });
+  }
+
+  function preencherSelectsTurnos(){
+    const ids=['esc-turno','jor-turno','pau-turno','pau-turno-filtro','pm-turno','pm-turno-filtro'];
+    ids.forEach(id=>{
+      const sel=$(id); if(!sel) return;
+      const v=sel.value;
+      sel.innerHTML = id.includes('filtro') || id==='pm-turno'
+        ? `<option value="">(qualquer)</option>`
+        : `<option value="">Selecione...</option>`;
+      turnos.forEach(t=>sel.insertAdjacentHTML('beforeend',`<option value="${t.id}">${t.nome} (${t.inicio}-${t.fim})</option>`));
+      sel.value=v;
+    });
+  }
+
+  function renderMantenedoresTabela(){
+    const tb=$('tabela-mantenedores'); tb.innerHTML='';
+    if(!mantenedores.length){
+      tb.innerHTML=`<tr><td colspan="8" class="text-center text-muted">Nenhum cadastrado.</td></tr>`;
+    }else{
+      mantenedores.forEach(m=>{
+        tb.insertAdjacentHTML('beforeend',`
+          <tr>
+            <td>${m.id}</td><td>${m.nome||''}</td><td>${m.cargo||''}</td>
+            <td>${m.especialidade||''}</td><td>${m.telefone||''}</td><td>${m.email||''}</td>
+            <td><span class="badge ${m.ativo==='SIM'?'green':'red'}">${m.ativo}</span></td>
+            <td><button class="btn btn-sm secondary" type="button" onclick="editarMantenedor(${m.id})">✏️</button></td>
+          </tr>`);
+      });
+    }
+    preencherSelectsMantenedores();
+  }
+
+  async function carregarMantenedoresTabela(){
+    mantenedores = await apiCall('getMantenedores') || [];
+    renderMantenedoresTabela();
+  }
+
+  window.editarMantenedor=function(id){
+    const m=mantenedores.find(x=>x.id==id);
+    $('mant-id').value=m.id;
+    $('mant-nome').value=m.nome||'';
+    $('mant-cargo').value=m.cargo||'';
+    $('mant-telefone').value=m.telefone||'';
+    $('mant-email').value=m.email||'';
+    $('mant-especialidade').value=m.especialidade||'';
+    $('mant-observacoes').value=m.observacoes||'';
+    $('mant-ativo').value=m.ativo||'SIM';
+  }
+
+  function limparFormMantenedor(){
+    $('form-mantenedor').reset();
+    $('mant-id').value='';
+    $('mant-ativo').value='SIM';
+  }
+
+  async function salvarMantenedorForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando mantenedor...', async ()=>{
+      const mant={
+        id:$('mant-id').value||null,
+        nome:$('mant-nome').value,
+        cargo:$('mant-cargo').value,
+        telefone:$('mant-telefone').value,
+        email:$('mant-email').value,
+        especialidade:$('mant-especialidade').value,
+        observacoes:$('mant-observacoes').value,
+        ativo:$('mant-ativo').value
+      };
+      const r=await apiCall('salvarMantenedor',mant,'POST');
+      alertar(r.message,'success');
+      limparFormMantenedor();
+      await carregarMantenedoresTabela();
+      await carregarPainelDia();
+    });
+  }
+
+  function renderTurnosTabela(){
+    const tb=$('tabela-turnos'); tb.innerHTML='';
+    if(!turnos.length){
+      tb.innerHTML=`<tr><td colspan="6" class="text-center text-muted">Nenhum turno.</td></tr>`;
+    }else{
+      turnos.forEach(t=>{
+        tb.insertAdjacentHTML('beforeend',`
+          <tr>
+            <td>${t.id}</td><td>${t.nome||''}</td><td>${t.inicio||''}</td><td>${t.fim||''}</td><td>${t.descricao||''}</td>
+            <td>
+              <button class="btn btn-sm secondary" type="button" onclick="editarTurno(${t.id})">✏️</button>
+              <button class="btn btn-sm danger" type="button" onclick="excluirTurno(${t.id})">🗑️</button>
+            </td>
+          </tr>`);
+      });
+    }
+    preencherSelectsTurnos();
+  }
+
+  async function carregarTurnosTabela(){
+    turnos = await apiCall('getTurnos') || [];
+    renderTurnosTabela();
+  }
+
+  window.editarTurno=function(id){
+    const t=turnos.find(x=>x.id==id);
+    $('turno-id').value=t.id;
+    $('turno-nome').value=t.nome||'';
+    $('turno-inicio').value=(t.inicio||'').slice(0,5);
+    $('turno-fim').value=(t.fim||'').slice(0,5);
+    $('turno-descricao').value=t.descricao||'';
+  }
+
+  function limparFormTurno(){
+    $('form-turno').reset();
+    $('turno-id').value='';
+  }
+
+  async function salvarTurnoForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando turno...', async ()=>{
+      const t={
+        id:$('turno-id').value||null,
+        nome:$('turno-nome').value,
+        inicio:$('turno-inicio').value,
+        fim:$('turno-fim').value,
+        descricao:$('turno-descricao').value||''
+      };
+      const r=await apiCall('salvarTurno',t,'POST');
+      alertar(r.message,'success');
+      limparFormTurno();
+      await carregarTurnosTabela();
+      await carregarPainelDia();
+    });
+  }
+
+  window.excluirTurno=async function(id){
+    if(!confirm('Excluir turno?')) return;
+    await runWithLoading('Excluindo turno...', async ()=>{
+      const r=await apiCall('excluirTurno',{id},'POST');
+      alertar(r.message,'success');
+      await carregarTurnosTabela();
+      await carregarPainelDia();
+    });
+  }
+
+  // ===== JORNADA =====
+  function getDiasSelecionados(){ return [...document.querySelectorAll('.jor-dia:checked')].map(cb=>cb.value); }
+  function limparDiasSelecionados(){ document.querySelectorAll('.jor-dia').forEach(cb=>cb.checked=false); }
+
+  async function carregarJornadaMantenedor(){
+    const id=$('jor-mantenedor').value;
+    jornadas=id? await apiCall('getJornadaMantenedor',{idMantenedor:id}):[];
+    jornadaCache.delete(String(id));
+
+    const tb=$('tabela-jornada'); tb.innerHTML='';
+    if(!jornadas.length){
+      tb.innerHTML=`<tr><td colspan="5" class="text-center text-muted">Sem jornada.</td></tr>`;
+      return;
+    }
+    jornadas.sort((a,b)=>Number(a.diaSemana)-Number(b.diaSemana));
+    jornadas.forEach(j=>{
+      const turno=turnos.find(t=>t.id==j.idTurno);
+      tb.insertAdjacentHTML('beforeend',`
+        <tr>
+          <td>${j.id}</td>
+          <td>${diaNome[j.diaSemana]||j.diaSemana}</td>
+          <td>${turno?turno.nome:j.idTurno}</td>
+          <td>${j.observacoes||''}</td>
+          <td><button class="btn btn-sm danger" type="button" onclick="excluirJornada(${j.id})">🗑️</button></td>
+        </tr>`);
+    });
+  }
+
+  async function salvarJornadaForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando jornada...', async ()=>{
+      const idM=$('jor-mantenedor').value;
+      const dias=getDiasSelecionados();
+      const idTurno=$('jor-turno').value;
+
+      if(!idM){alertar('Selecione um mantenedor.','error');return;}
+      if(!dias.length){alertar('Marque pelo menos um dia.','error');return;}
+      if(!idTurno){alertar('Selecione um turno.','error');return;}
+
+      const payload={
+        idMantenedor:idM,
+        dias, idTurno,
+        observacoes:$('jor-obs').value||'',
+        overwrite:$('jor-overwrite').checked
+      };
+
+      const r=await apiCall('salvarJornadaSemanalBatch',payload,'POST');
+      alertar(r.message,'success');
+      $('jor-obs').value='';
+      limparDiasSelecionados();
+      jornadaCache.delete(String(idM));
+      await carregarJornadaMantenedor();
+      await carregarPainelDia();
+    });
+  }
+
+  async function copiarJornada(){
+    await runWithLoading('Copiando jornada...', async ()=>{
+      const toId=$('jor-mantenedor').value;
+      const fromId=$('jor-copiar-from').value;
+      if(!toId||!fromId){alertar('Selecione destino e origem.','error');return;}
+      if(toId===fromId){alertar('Origem e destino diferentes.','error');return;}
+
+      const overwrite=confirm('Substituir a jornada atual do destino? (OK=sim / Cancel=não)');
+      const r=await apiCall('copiarJornadaDeMantenedor',{fromId,toId,overwrite},'POST');
+      alertar(r.message,'success');
+      jornadaCache.delete(String(toId));
+      await carregarJornadaMantenedor();
+      await carregarPainelDia();
+    });
+  }
+
+  window.excluirJornada=async function(id){
+    if(!confirm('Excluir jornada?'))return;
+    await runWithLoading('Excluindo jornada...', async ()=>{
+      const r=await apiCall('excluirJornadaSemanal',{id},'POST');
+      alertar(r.message,'success');
+      jornadaCache.clear();
+      await carregarJornadaMantenedor();
+      await carregarPainelDia();
+    });
+  }
+
+  function aplicarSegSex(){
+    limparDiasSelecionados();
+    document.querySelectorAll('.jor-dia').forEach(cb=>{
+      if(['2','3','4','5','6'].includes(cb.value)) cb.checked=true;
+    });
+  }
+
+  // ===== PAUSAS TURNO =====
+  async function carregarPausasTurno(){
+    const filtro=$('pau-turno-filtro').value||null;
+    pausas=await apiCall('getPausasTurno',filtro?{idTurno:filtro}:null,'GET')||[];
+    const tb=$('tabela-pausas');tb.innerHTML='';
+    if(!pausas.length){
+      tb.innerHTML=`<tr><td colspan="7" class="text-center text-muted">Sem pausas.</td></tr>`;
+      return;
+    }
+    pausas.forEach(p=>{
+      const turno=turnos.find(t=>t.id==p.idTurno);
+      tb.insertAdjacentHTML('beforeend',`
+        <tr>
+          <td>${p.id}</td><td>${turno?turno.nome:p.idTurno}</td><td>${p.nomePausa||''}</td>
+          <td>${p.horaInicio||''}</td><td>${p.horaFim||''}</td><td>${p.observacoes||''}</td>
+          <td>
+            <button class="btn btn-sm secondary" type="button" onclick="editarPausa(${p.id})">✏️</button>
+            <button class="btn btn-sm danger" type="button" onclick="excluirPausa(${p.id})">🗑️</button>
+          </td>
+        </tr>`);
+    });
+  }
+
+  window.editarPausa=function(id){
+    const p=pausas.find(x=>x.id==id);
+    $('pau-id').value=p.id;
+    $('pau-turno').value=p.idTurno;
+    $('pau-nome').value=p.nomePausa||'';
+    $('pau-inicio').value=(p.horaInicio||'').slice(0,5);
+    $('pau-fim').value=(p.horaFim||'').slice(0,5);
+    $('pau-obs').value=p.observacoes||'';
+  }
+
+  function limparFormPausa(){
+    $('form-pausa').reset();
+    $('pau-id').value='';
+  }
+
+  async function salvarPausaForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando pausa...', async ()=>{
+      const p={
+        id:$('pau-id').value||null,
+        idTurno:$('pau-turno').value,
+        nomePausa:$('pau-nome').value,
+        horaInicio:$('pau-inicio').value,
+        horaFim:$('pau-fim').value,
+        observacoes:$('pau-obs').value||''
+      };
+      const r=await apiCall('salvarPausaTurno',p,'POST');
+      alertar(r.message,'success');
+      limparFormPausa();
+      await carregarPausasTurno();
+      pausasAll = await apiCall('getPausasTurno') || [];
+      await carregarPainelDia();
+    });
+  }
+
+  window.excluirPausa=async function(id){
+    if(!confirm('Excluir pausa?'))return;
+    await runWithLoading('Excluindo pausa...', async ()=>{
+      const r=await apiCall('excluirPausaTurno',{id},'POST');
+      alertar(r.message,'success');
+      await carregarPausasTurno();
+      pausasAll = await apiCall('getPausasTurno') || [];
+      await carregarPainelDia();
+    });
+  }
+
+  // ===== PAUSAS MANTENEDOR =====
+  async function carregarPausasMantenedor(){
+    const idM=$('pm-mantenedor-filtro').value||null;
+    const idT=$('pm-turno-filtro').value||null;
+    const params={};
+    if(idM)params.idMantenedor=idM;
+    if(idT)params.idTurno=idT;
+
+    pausasMant=await apiCall('getPausasMantenedor',Object.keys(params).length?params:null,'GET')||[];
+    const tb=$('tabela-pausasMant');tb.innerHTML='';
+    if(!pausasMant.length){
+      tb.innerHTML=`<tr><td colspan="8" class="text-center text-muted">Sem pausas fixas.</td></tr>`;
+      return;
+    }
+    pausasMant.forEach(p=>{
+      const m=mantenedores.find(x=>x.id==p.idMantenedor);
+      const t=turnos.find(x=>x.id==p.idTurno);
+      tb.insertAdjacentHTML('beforeend',`
+        <tr>
+          <td>${p.id}</td>
+          <td>${m?m.nome:p.idMantenedor}</td>
+          <td>${p.idTurno?(t?t.nome:p.idTurno):'-'}</td>
+          <td>${p.nomePausa||''}</td>
+          <td>${p.horaInicio||''}</td>
+          <td>${p.horaFim||''}</td>
+          <td>${p.observacoes||''}</td>
+          <td>
+            <button class="btn btn-sm secondary" type="button" onclick="editarPausaMant(${p.id})">✏️</button>
+            <button class="btn btn-sm danger" type="button" onclick="excluirPausaMant(${p.id})">🗑️</button>
+          </td>
+        </tr>`);
+    });
+  }
+
+  window.editarPausaMant=function(id){
+    const p=pausasMant.find(x=>x.id==id);
+    $('pm-id').value=p.id;
+    $('pm-mantenedor').value=p.idMantenedor;
+    $('pm-turno').value=p.idTurno||'';
+    $('pm-nome').value=p.nomePausa||'';
+    $('pm-inicio').value=(p.horaInicio||'').slice(0,5);
+    $('pm-fim').value=(p.horaFim||'').slice(0,5);
+    $('pm-obs').value=p.observacoes||'';
+  }
+
+  function limparFormPausaMant(){
+    $('form-pausaMant').reset();
+    $('pm-id').value='';
+  }
+
+  async function salvarPausaMantForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando pausa fixa...', async ()=>{
+      const p={
+        id:$('pm-id').value||null,
+        idMantenedor:$('pm-mantenedor').value,
+        idTurno:$('pm-turno').value||'',
+        nomePausa:$('pm-nome').value,
+        horaInicio:$('pm-inicio').value,
+        horaFim:$('pm-fim').value,
+        observacoes:$('pm-obs').value||''
+      };
+      const r=await apiCall('salvarPausaMantenedor',p,'POST');
+      alertar(r.message,'success');
+      limparFormPausaMant();
+      await carregarPausasMantenedor();
+      pausasMantAll = await apiCall('getPausasMantenedor') || [];
+      await carregarPainelDia();
+    });
+  }
+
+  window.excluirPausaMant=async function(id){
+    if(!confirm('Excluir pausa fixa?'))return;
+    await runWithLoading('Excluindo pausa fixa...', async ()=>{
+      const r=await apiCall('excluirPausaMantenedor',{id},'POST');
+      alertar(r.message,'success');
+      await carregarPausasMantenedor();
+      pausasMantAll = await apiCall('getPausasMantenedor') || [];
+      await carregarPainelDia();
+    });
+  }
+
+  // ===== ESCALAS / FERIAS =====
+  async function carregarEscalasData(){
+    if(!$('data-escalas').value)$('data-escalas').value=hojeISO();
+    const d=$('data-escalas').value;
+    escalas=await apiCall('getEscalasPorData',{data:d})||[];
+    const tb=$('tabela-escalas');tb.innerHTML='';
+    if(!escalas.length){
+      tb.innerHTML=`<tr><td colspan="7" class="text-center text-muted">Sem escalas.</td></tr>`;
+      return;
+    }
+    escalas.forEach(e=>{
+      const m=mantenedores.find(x=>x.id==e.idMantenedor);
+      const t=turnos.find(x=>x.id==e.idTurno);
+      tb.insertAdjacentHTML('beforeend',`
+        <tr>
+          <td>${e.id}</td><td>${e.data}</td><td>${m?m.nome:e.idMantenedor}</td>
+          <td>${t?t.nome:e.idTurno}</td><td>${e.tipo}</td><td>${e.observacoes||''}</td>
+          <td><button class="btn btn-sm danger" type="button" onclick="excluirEscala(${e.id})">🗑️</button></td>
+        </tr>`);
+    });
+  }
+
+  async function salvarEscalaForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando escala...', async ()=>{
+      const e={
+        data:$('esc-data').value,
+        idMantenedor:$('esc-mantenedor').value,
+        idTurno:$('esc-turno').value,
+        tipo:$('esc-tipo').value,
+        observacoes:$('esc-observacoes').value||''
+      };
+      const r=await apiCall('salvarEscala',e,'POST');
+      alertar(r.message,'success');
+      $('esc-observacoes').value='';
+      await carregarEscalasData();
+      await carregarPainelDia();
+    });
+  }
+
+  window.excluirEscala=async function(id){
+    if(!confirm('Excluir escala?'))return;
+    await runWithLoading('Excluindo escala...', async ()=>{
+      const r=await apiCall('excluirEscala',{id},'POST');
+      alertar(r.message,'success');
+      await carregarEscalasData();
+      await carregarPainelDia();
+    });
+  }
+
+  async function carregarFeriasTabela(){
+    ferias=await apiCall('getFeriasLicencas')||[];
+    const tb=$('tabela-ferias');tb.innerHTML='';
+    if(!ferias.length){
+      tb.innerHTML=`<tr><td colspan="6" class="text-center text-muted">Sem registros.</td></tr>`;
+      return;
+    }
+    ferias.forEach(f=>{
+      const m=mantenedores.find(x=>x.id==f.idMantenedor);
+      tb.insertAdjacentHTML('beforeend',`
+        <tr><td>${f.id}</td><td>${m?m.nome:f.idMantenedor}</td><td>${f.dataInicio}</td><td>${f.dataFim}</td><td>${f.tipo}</td><td>${f.observacoes||''}</td></tr>`);
+    });
+  }
+
+  function limparFormFerias(){
+    $('form-ferias').reset();
+    $('fer-id').value='';
+    $('fer-tipo').value='Ferias';
+  }
+
+  async function salvarFeriasForm(ev){
+    ev.preventDefault();
+    await runWithLoading('Salvando férias/licença...', async ()=>{
+      const f={
+        id:$('fer-id').value||null,
+        idMantenedor:$('fer-mantenedor').value,
+        dataInicio:$('fer-data-inicio').value,
+        dataFim:$('fer-data-fim').value,
+        tipo:$('fer-tipo').value,
+        observacoes:$('fer-observacoes').value||''
+      };
+      const r=await apiCall('salvarFerias',f,'POST');
+      alertar(r.message,'success');
+      limparFormFerias();
+      await carregarFeriasTabela();
+      await carregarPainelDia();
+    });
+  }
+
+  // ===== PAINEL =====
+  function isoDayFromDateStr(dateStr){
+    const d=new Date(dateStr+'T00:00:00');
+    const js=d.getDay();
+    return js===0?1:js+1;
+  }
+  function minutesFromHHMM(hhmm){
+    if(!hhmm) return 0;
+    const [h,m]=hhmm.split(':').map(Number);
+    return h*60+m;
+  }
+  function durationMinutes(inicio,fim){
+    const a=minutesFromHHMM(inicio), b=minutesFromHHMM(fim);
+    if(b>=a) return b-a;
+    return (24*60-a)+b;
+  }
+  function formatHH(min){
+    const h=Math.floor(min/60);
+    const m=min%60;
+    return `${h}h${String(m).padStart(2,'0')}`;
+  }
+  function selecionarDiaBotao(diaSemana){
+    document.querySelectorAll('.dash-dia').forEach(b=>{
+      b.classList.toggle('active', String(b.dataset.dia)===String(diaSemana));
+      b.classList.toggle('secondary', String(b.dataset.dia)!==String(diaSemana));
+    });
+  }
+  function ajustarDataParaDiaSemana(targetDia){
+    const input=$('dash-data');
+    if(!input.value) return;
+    const cur=new Date(input.value+'T00:00:00');
+    const curIso=cur.getDay()===0?7:cur.getDay();
+    const targetIso=targetDia===1?7:targetDia-1;
+    const monday=new Date(cur);
+    monday.setDate(cur.getDate()-(curIso-1));
+    const target=new Date(monday);
+    target.setDate(monday.getDate()+(targetIso-1));
+    input.value=target.toISOString().slice(0,10);
+  }
+
+  async function carregarPainelDia(){
+    if(!$('dash-data').value) $('dash-data').value=hojeISO();
+    const dataStr=$('dash-data').value;
+    const diaSemana=isoDayFromDateStr(dataStr);
+    selecionarDiaBotao(diaSemana);
+
+    const escalasDia = await apiCall('getEscalasPorData',{data:dataStr}) || [];
+    const ativos = mantenedores.filter(m=>m.ativo==='SIM');
+    const linhas=[];
+    const somaPorTurno={};
+    let totalDiaMin=0;
+
+    for(const m of ativos){
+      const escala = escalasDia.find(e=>String(e.idMantenedor)===String(m.id));
+      let idTurno = escala ? escala.idTurno : null;
+
+      if(!idTurno){
+        const jornadasM = await getJornadaCached(m.id);
+        const jDia = jornadasM.find(j=>String(j.diaSemana)===String(diaSemana));
+        if(jDia) idTurno = jDia.idTurno;
+      }
+      if(!idTurno) continue;
+
+      const turno=turnos.find(t=>String(t.id)===String(idTurno));
+      if(!turno) continue;
+
+      const durTurnoMin=durationMinutes(turno.inicio, turno.fim);
+
+      const pausasMantAplic = pausasMantAll.filter(p=>{
+        return String(p.idMantenedor)===String(m.id) &&
+               (!p.idTurno || String(p.idTurno)===String(idTurno));
+      });
+
+      const pausasAp = pausasMantAplic.length
+        ? pausasMantAplic
+        : pausasAll.filter(p=>String(p.idTurno)===String(idTurno));
+
+      let pausaMin=0;
+      const pausasTxt=[];
+      pausasAp.forEach(p=>{
+        const pmin=durationMinutes(p.horaInicio,p.horaFim);
+        pausaMin+=pmin;
+        pausasTxt.push(`${p.nomePausa} ${p.horaInicio}-${p.horaFim}`);
+      });
+
+      const hhMin=Math.max(durTurnoMin-pausaMin,0);
+      totalDiaMin+=hhMin;
+      somaPorTurno[idTurno]=(somaPorTurno[idTurno]||0)+hhMin;
+
+      linhas.push({
+        mantenedor:m.nome,
+        turnoTxt:`${turno.nome} (${turno.inicio}-${turno.fim})`,
+        jornadaTxt:`${turno.inicio} - ${turno.fim}`,
+        pausasTxt: pausasTxt.join(' | ') || '-',
+        hhTxt: formatHH(hhMin),
+        idTurno:idTurno
+      });
+    }
+
+    const cardsDiv=$('dash-cards-turno');
+    cardsDiv.innerHTML='';
+    Object.keys(somaPorTurno).forEach(idT=>{
+      const t=turnos.find(x=>String(x.id)===String(idT));
+      const min=somaPorTurno[idT];
+      cardsDiv.insertAdjacentHTML('beforeend',`
+        <div class="card">
+          <div class="card-title">HH disponíveis no turno</div>
+          <div class="card-value">${formatHH(min)}</div>
+          <div class="card-foot">${t?t.nome:idT}</div>
+        </div>
+      `);
+    });
+    cardsDiv.insertAdjacentHTML('beforeend',`
+      <div class="card">
+        <div class="card-title">Total disponível no dia</div>
+        <div class="card-value">${formatHH(totalDiaMin)}</div>
+        <div class="card-foot">Somatório</div>
+      </div>
+    `);
+
+    const tb=$('dash-tabela-dia'); tb.innerHTML='';
+    if(!linhas.length){
+      tb.innerHTML=`<tr><td colspan="5" class="text-center text-muted">Sem mantenedores para este dia.</td></tr>`;
+    } else {
+      linhas.forEach(l=>{
+        tb.insertAdjacentHTML('beforeend',`
+          <tr>
+            <td>${l.mantenedor}</td>
+            <td>${l.turnoTxt}</td>
+            <td>${l.jornadaTxt}</td>
+            <td>${l.pausasTxt}</td>
+            <td><strong>${l.hhTxt}</strong></td>
+          </tr>
+        `);
+      });
+    }
+  }
+
+  // ===== INIT =====
+  async function init(){
+    try{
+      const hoje = hojeISO();
+      $('esc-data').value=hoje;
+      $('data-escalas').value=hoje;
+      $('dash-data').value=hoje;
+
+      const pMants  = apiCall('getMantenedores');
+      const pTurns  = apiCall('getTurnos');
+      const pStats  = apiCall('getEstatisticas');
+      const pPausas = apiCall('getPausasTurno');
+      const pPausasM= apiCall('getPausasMantenedor');
+
+      setLoading(true,'Carregando Mantenedores...');
+      mantenedores = await pMants || [];
+      renderMantenedoresTabela();
+
+      setLoading(true,'Carregando Turnos...');
+      turnos = await pTurns || [];
+      renderTurnosTabela();
+
+      setLoading(true,'Atualizando Disponibilidade...');
+      pausasAll     = await pPausas  || [];
+      pausasMantAll = await pPausasM || [];
+
+      setLoading(true,'Carregando Painel...');
+      const s = await pStats || {};
+      $('card-total-mantenedores').textContent=s.totalMantenedores ?? mantenedores.length ?? '-';
+      $('card-mantenedores-ativos').textContent=s.mantenedoresAtivos ?? mantenedores.filter(m=>m.ativo==='SIM').length ?? '-';
+      $('card-total-turnos').textContent=s.totalTurnos ?? turnos.length ?? '-';
+      $('card-escalas-hoje').textContent=s.escalasHoje ?? '-' ;
+
+      await carregarPainelDia();
+      alertar('Sistema pronto.','success',1500);
+
+    }catch(e){
+      alertar('Erro inicial: '+e.message,'error',6000);
+      console.error(e);
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  // ===== EVENTOS =====
+  document.querySelectorAll('.nav-links li').forEach(li=>{
+    li.addEventListener('click',()=>showSection(li.dataset.section));
+  });
+
+  document.querySelectorAll('.dash-dia').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const dia = Number(btn.dataset.dia);
+      selecionarDiaBotao(dia);
+      ajustarDataParaDiaSemana(dia);
+      runWithLoading('Carregando Painel...', carregarPainelDia);
+    });
+  });
+
+  $('dash-data')?.addEventListener('change', ()=>runWithLoading('Carregando Painel...', carregarPainelDia));
+  $('btn-refresh-dash')?.addEventListener('click', ()=>runWithLoading('Carregando Painel...', carregarPainelDia));
+
+  $('form-mantenedor').addEventListener('submit',salvarMantenedorForm);
+  $('btn-limpar-mantenedor').addEventListener('click',limparFormMantenedor);
+  $('btn-refresh-mantenedores').addEventListener('click', ()=>runWithLoading('Carregando mantenedores...', carregarMantenedoresTabela));
+
+  $('form-turno').addEventListener('submit',salvarTurnoForm);
+  $('btn-limpar-turno').addEventListener('click',limparFormTurno);
+  $('btn-refresh-turnos').addEventListener('click', ()=>runWithLoading('Carregando turnos...', carregarTurnosTabela));
+
+  $('form-jornada').addEventListener('submit',salvarJornadaForm);
+  $('btn-refresh-jornada').addEventListener('click', ()=>runWithLoading('Carregando jornada...', carregarJornadaMantenedor));
+  $('jor-mantenedor').addEventListener('change', ()=>runWithLoading('Carregando jornada...', carregarJornadaMantenedor));
+  $('btn-aplicar-segsex').addEventListener('click',aplicarSegSex);
+  $('btn-copiar-jornada').addEventListener('click',copiarJornada);
+
+  $('form-pausa').addEventListener('submit',salvarPausaForm);
+  $('btn-limpar-pausa').addEventListener('click',limparFormPausa);
+  $('btn-refresh-pausas').addEventListener('click', ()=>runWithLoading('Carregando pausas...', carregarPausasTurno));
+  $('pau-turno-filtro').addEventListener('change', ()=>runWithLoading('Carregando pausas...', carregarPausasTurno));
+
+  $('form-pausaMant').addEventListener('submit',salvarPausaMantForm);
+  $('btn-limpar-pausaMant').addEventListener('click',limparFormPausaMant);
+  $('btn-refresh-pausasMant').addEventListener('click', ()=>runWithLoading('Carregando pausas fixas...', carregarPausasMantenedor));
+  $('pm-mantenedor-filtro').addEventListener('change', ()=>runWithLoading('Carregando pausas fixas...', carregarPausasMantenedor));
+  $('pm-turno-filtro').addEventListener('change', ()=>runWithLoading('Carregando pausas fixas...', carregarPausasMantenedor));
+
+  $('form-escala')?.addEventListener('submit',salvarEscalaForm);
+  $('btn-refresh-escalas')?.addEventListener('click', ()=>runWithLoading('Carregando escalas...', carregarEscalasData));
+  $('data-escalas')?.addEventListener('change', ()=>runWithLoading('Carregando escalas...', carregarEscalasData));
+
+  $('form-ferias')?.addEventListener('submit',salvarFeriasForm);
+  $('btn-limpar-ferias')?.addEventListener('click',limparFormFerias);
+  $('btn-refresh-ferias')?.addEventListener('click', ()=>runWithLoading('Carregando férias/licenças...', carregarFeriasTabela));
+
+  document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestão de Turnos de Máquinas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --sidebar-width: 260px;
+      --bg-main: #f5f6fa;
+      --bg-sidebar: #111827;
+      --bg-card: #ffffff;
+      --text-muted: #6b7280;
+      --accent: #2563eb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-main);
+      color: #111827;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+    }
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .sidebar-sub {
+      font-size: .8rem;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+    .nav-section-title {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #6b7280;
+      margin: 18px 0 4px 8px;
+    }
+    .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .nav-item-btn {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: #e5e7eb;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: .9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .nav-item-btn span.icon {
+      width: 18px;
+      text-align: center;
+      font-size: .9rem;
+    }
+    .nav-item-btn.active {
+      background: #1d4ed8;
+    }
+    .nav-item-btn:hover:not(.active) {
+      background: rgba(156, 163, 175, 0.25);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: .75rem;
+      color: #9ca3af;
+      padding: 8px;
+    }
+    .status-pill {
+      font-size: .7rem;
+      border-radius: 999px;
+      padding: 2px 8px;
+      background:#022c22;
+      color:#6ee7b7;
+      border:1px solid #059669;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 16px 20px;
+    }
+
+    .main-header {
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .main-header h2 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    .main-header-sub {
+      font-size: .85rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(15,23,42,.06);
+      border: none;
+    }
+
+    .chip {
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:.75rem;
+      background:#e5e7eb;
+      margin-right:4px;
+    }
+    .chip-active {
+      background:#d1fae5;
+      color:#065f46;
+    }
+
+    .progress-wrap { display:none; }
+
+    .tab-section { display:none; }
+    .tab-section.active { display:block; }
+
+    .table-smaller td, .table-smaller th {
+      padding-top: .4rem;
+      padding-bottom: .4rem;
+    }
+
+    .small-muted {
+      font-size:.8rem;
+      color:var(--text-muted);
+    }
+
+    .card-summary-title {
+      font-size:.8rem;
+      color:var(--text-muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .card-summary-value {
+      font-size:1.4rem;
+      font-weight:600;
+    }
+    .card-summary-footer {
+      font-size:.75rem;
+      color:var(--text-muted);
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display:none; }
+      .layout { flex-direction:column; }
+      .main { padding:12px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-title">Gestão de Máquinas</div>
+      <div class="sidebar-sub">Turnos • Disponibilidade • Escalas</div>
+    </div>
+
+    <div class="nav-section-title">Visão</div>
+    <ul class="nav-list">
+      <li><button class="nav-item-btn active" data-target="tab-painel">
+        <span class="icon">📊</span> <span>Painel</span>
+      </button></li>
+    </ul>
+
+    <div class="nav-section-title">Configuração</div>
+    <ul class="nav-list">
+      <li><button class="nav-item-btn" data-target="tab-modelos">
+        <span class="icon">⏱️</span> <span>Modelos de turno</span>
+      </button></li>
+      <li><button class="nav-item-btn" data-target="tab-turnos-maquina">
+        <span class="icon">🛠️</span> <span>Turnos por máquina</span>
+      </button></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>Integração:</div>
+      <span class="status-pill">Online • API Sheets</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="main-header">
+      <div>
+        <h2>Controle de Turnos de Máquinas</h2>
+        <div class="main-header-sub">
+          Integração direta com a planilha <b>Dados</b> (EQUIPAMENTOS, TURNOS_BASE_MAQUINAS e TURNOS_MAQUINAS).
+        </div>
+      </div>
+      <div class="d-none d-md-block small-muted">
+        Última atualização: <span id="lblUltimaAtualizacao">-</span>
+      </div>
+    </div>
+
+    <!-- BARRA DE PROGRESSO -->
+    <div class="progress-wrap mb-3">
+      <div class="alert alert-info d-flex align-items-center gap-2 mb-0">
+        <div class="spinner-border spinner-border-sm"></div>
+        <span id="progressMsg">Carregando...</span>
+      </div>
+    </div>
+    <!-- PAINEL -->
+    <section id="tab-painel" class="tab-section active">
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <div class="card p-3">
+            <div class="card-summary-title">Máquinas cadastradas</div>
+            <div class="card-summary-value" id="cardTotalEquip">-</div>
+            <div class="card-summary-footer">Total na aba EQUIPAMENTOS</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3">
+            <div class="card-summary-title">Modelos de turno</div>
+            <div class="card-summary-value" id="cardTotalModelos">-</div>
+            <div class="card-summary-footer">TURNOS_BASE_MAQUINAS</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3">
+            <div class="card-summary-title">Vínculos máquina-turno</div>
+            <div class="card-summary-value" id="cardTotalVinculos">-</div>
+            <div class="card-summary-footer">TURNOS_MAQUINAS</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3">
+            <div class="card-summary-title">Máquinas sem turno</div>
+            <div class="card-summary-value" id="cardEquipSemTurno">-</div>
+            <div class="card-summary-footer">para configuração futura</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-3">
+        <h6 class="mb-2">Resumo de turnos por modelo</h6>
+        <p class="small-muted mb-2">Quantas máquinas utilizam cada modelo de turno.</p>
+        <div id="listaResumoModelos" class="small-muted">
+          Nenhum dado carregado.
+        </div>
+      </div>
+    </section>
+
+    <!-- MODELOS DE TURNO -->
+    <section id="tab-modelos" class="tab-section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h5 class="mb-0">Modelos de turno (Máquinas)</h5>
+          <div class="small-muted">Defina aqui os turnos padrão que depois serão vinculados aos equipamentos.</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="abrirNovoModelo()">+ Novo modelo</button>
+      </div>
+
+      <div class="card p-3">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle table-smaller" id="tblTurnosBase">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Turno</th>
+                <th>Tipo</th>
+                <th>Horário</th>
+                <th>Intervalo</th>
+                <th>Dias</th>
+                <th>Ativo</th>
+                <th style="width:140px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="small-muted" id="countModelosInfo"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TURNOS POR MÁQUINA -->
+    <section id="tab-turnos-maquina" class="tab-section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h5 class="mb-0">Turnos por máquina</h5>
+          <div class="small-muted">
+            Selecione máquinas, escolha um modelo de turno e aplique em lote.
+            Cada máquina pode ter mais de um modelo vinculado (ex.: Diurno + Noturno).
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-3 mb-3">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label">Modelo de turno</label>
+            <select id="selModeloAplicar" class="form-select">
+              <option value="">Selecione um modelo...</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Ação</label><br/>
+            <button
+              id="btnAplicarModelo"
+              class="btn btn-success btn-sm"
+              onclick="aplicarModeloSelecionado()"
+            >
+              Aplicar modelo aos equipamentos marcados
+            </button>
+          </div>
+          <div class="col-md-5 text-end small-muted">
+            <span id="lblSelecionados">0</span> equipamento(s) selecionado(s).
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-3">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle table-smaller" id="tblTurnosMaquinas">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="chkAllEq" onclick="toggleSelectAllEquip(this)" /></th>
+                <th>TAG</th>
+                <th>Nome equipamento</th>
+                <th>Modelos de turno vinculados</th>
+                <th style="width:120px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="small-muted" id="countTurnosMaquinasInfo"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL MODELO DE TURNO -->
+<div class="modal fade" id="modalTurnoBase" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleModelo">Novo modelo de turno</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="frmTurnoBase" onsubmit="event.preventDefault(); salvarModelo();">
+
+          <input type="hidden" id="ID_TURNO_BASE" />
+
+          <div class="row g-3">
+
+            <div class="col-md-4">
+              <label class="form-label">Nome do turno</label>
+              <input id="TURNO_NOME" class="form-control" placeholder="Ex: Diurno" required />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Tipo</label>
+              <select id="TIPO_TURNO" class="form-select" required>
+                <option value="Operacao">Operação</option>
+                <option value="Pausa">Pausa</option>
+                <option value="Standby">Standby</option>
+                <option value="Sob demanda">Sob demanda</option>
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label">Início</label>
+              <input type="time" id="HORA_INICIO" class="form-control" required />
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label">Fim</label>
+              <input type="time" id="HORA_FIM" class="form-control" required />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Intervalo início</label>
+              <input type="time" id="INTERVALO_INICIO" class="form-control" />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Intervalo fim</label>
+              <input type="time" id="INTERVALO_FIM" class="form-control" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label d-block">Dias da semana</label>
+              <div class="d-flex flex-wrap gap-2">
+                <label><input type="checkbox" id="SEGUNDA" /> Seg</label>
+                <label><input type="checkbox" id="TERCA" /> Ter</label>
+                <label><input type="checkbox" id="QUARTA" /> Qua</label>
+                <label><input type="checkbox" id="QUINTA" /> Qui</label>
+                <label><input type="checkbox" id="SEXTA" /> Sex</label>
+                <label><input type="checkbox" id="SABADO" /> Sáb</label>
+                <label><input type="checkbox" id="DOMINGO" /> Dom</label>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Ativo</label>
+              <select id="ATIVO" class="form-select">
+                <option value="SIM">SIM</option>
+                <option value="NAO">NÃO</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Observação</label>
+              <textarea id="OBSERVACAO" class="form-control" rows="2"></textarea>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Salvar</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ====== CONFIGURAÇÃO ======
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFKSUmUqC7md_dV2_OF9GwL0jLpBBxkYSjE7j2joznw5IjEPTzfBZWV1PZpsDO4hsE/exec";
+
+  let equipamentos = [];
+  let turnosBase   = [];
+  let vinculos     = []; // TURNOS_MAQUINAS
+  const modalModelo = new bootstrap.Modal('#modalTurnoBase');
+
+  const CAB_FIELDS_MODELO = [
+    {id:'ID_TURNO_BASE'},
+    {id:'TURNO_NOME'},
+    {id:'TIPO_TURNO'},
+    {id:'HORA_INICIO'},
+    {id:'HORA_FIM'},
+    {id:'INTERVALO_INICIO'},
+    {id:'INTERVALO_FIM'},
+    {id:'SEGUNDA', type:'check'},
+    {id:'TERCA', type:'check'},
+    {id:'QUARTA', type:'check'},
+    {id:'QUINTA', type:'check'},
+    {id:'SEXTA', type:'check'},
+    {id:'SABADO', type:'check'},
+    {id:'DOMINGO', type:'check'},
+    {id:'ATIVO'},
+    {id:'OBSERVACAO'}
+  ];
+
+  // ====== Helpers gerais ======
+  function showProgress(msg){
+    document.querySelector('.progress-wrap').style.display = 'block';
+    document.getElementById('progressMsg').innerText = msg || 'Processando...';
+  }
+  function hideProgress(){
+    document.querySelector('.progress-wrap').style.display = 'none';
+  }
+  function formatTime(v){
+    if (!v) return '';
+    if (/^\d{1,2}:\d{2}$/.test(v)) return v;
+    if (typeof v === 'number'){
+      const total = Math.round(v*24*60);
+      const h = String(Math.floor(total/60)).padStart(2,'0');
+      const m = String(total%60).padStart(2,'0');
+      return `${h}:${m}`;
+    }
+    try {
+      const d = new Date(v);
+      if (!isNaN(d.getTime())){
+        const h = String(d.getHours()).padStart(2,'0');
+        const m = String(d.getMinutes()).padStart(2,'0');
+        return `${h}:${m}`;
+      }
+    } catch(e){}
+    return v;
+  }
+
+  async function apiGet(action){
+    const r = await fetch(`${SCRIPT_URL}?action=${encodeURIComponent(action)}`);
+    const t = await r.text();
+    try { return JSON.parse(t); } catch(e){ return {ok:false, raw:t}; }
+  }
+
+  async function apiPost(action, payload){
+    const form = new URLSearchParams();
+    form.append('action', action);
+    form.append('payload', JSON.stringify(payload || {}));
+    const r = await fetch(SCRIPT_URL, { method:'POST', body: form });
+    const t = await r.text();
+    try { return JSON.parse(t); } catch(e){ return {ok:false, raw:t}; }
+  }
+
+  // habilita/desabilita controles da aba "Turnos por máquina"
+  function setControlesTurnosMaquinaEnabled(enabled) {
+    const btn = document.getElementById('btnAplicarModelo');
+    if (btn) btn.disabled = !enabled;
+
+    const sel = document.getElementById('selModeloAplicar');
+    if (sel) sel.disabled = !enabled;
+
+    document.querySelectorAll('.chk-eq, #chkAllEq').forEach(chk => {
+      chk.disabled = !enabled;
+    });
+  }
+
+  // ====== Navegação lateral ======
+  document.querySelectorAll('.nav-item-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.nav-item-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.target;
+      document.querySelectorAll('.tab-section').forEach(sec=>{
+        sec.classList.toggle('active', sec.id === target);
+      });
+    });
+  });
+
+  // ====== Inicialização ======
+  async function init(){
+    showProgress('Carregando dados...');
+    const [eq, tb, tm] = await Promise.all([
+      apiGet('listarEquipamentos'),
+      apiGet('listarTurnosBaseMaquinas'),
+      apiGet('listarTurnosMaquinas')
+    ]);
+
+    if (!eq.ok || !tb.ok || !tm.ok){
+      hideProgress();
+      alert('Erro ao carregar dados iniciais.');
+      console.log(eq,tb,tm);
+      return;
+    }
+
+    equipamentos = eq.equipamentos || [];
+    turnosBase   = tb.turnosBase   || [];
+    vinculos     = tm.vinculos     || [];
+
+    document.getElementById('lblUltimaAtualizacao').innerText =
+      new Date().toLocaleString('pt-BR');
+
+    renderPainel();
+    preencherModeloDropdown();
+    renderTabelaModelos();
+    renderTabelaTurnosMaquinas();
+
+    hideProgress();
+  }
+
+  // ====== Painel ======
+  function renderPainel(){
+    const totalEquip  = equipamentos.length;
+    const totalModelos = turnosBase.length;
+    const totalVinculos = vinculos.length;
+
+    const equipComAlgumTurno = new Set(vinculos.map(v => String(v.ID_EQUIPAMENTO || '').trim()));
+    const equipSemTurno = equipamentos.filter(e => !equipComAlgumTurno.has(String(e.id).trim())).length;
+
+    document.getElementById('cardTotalEquip').innerText       = totalEquip;
+    document.getElementById('cardTotalModelos').innerText     = totalModelos;
+    document.getElementById('cardTotalVinculos').innerText    = totalVinculos;
+    document.getElementById('cardEquipSemTurno').innerText    = equipSemTurno;
+
+    // resumo por modelo
+    const countByModelo = {};
+    vinculos.forEach(v=>{
+      const idTb = String(v.ID_TURNO_BASE || '').trim();
+      if (!idTb) return;
+      countByModelo[idTb] = (countByModelo[idTb] || 0) + 1;
+    });
+
+    const container = document.getElementById('listaResumoModelos');
+    container.innerHTML = '';
+
+    if (!totalModelos){
+      container.textContent = 'Nenhum modelo de turno cadastrado.';
+      return;
+    }
+
+    turnosBase.forEach(tb=>{
+      const id = String(tb.ID_TURNO_BASE || '').trim();
+      const qtd = countByModelo[id] || 0;
+
+      const line = document.createElement('div');
+      line.className = 'mb-1';
+      line.innerHTML = `<strong>${tb.TURNO_NOME || ''}</strong> — ${qtd} máquina(s).`;
+      container.appendChild(line);
+    });
+  }
+
+  // ====== MODELOS DE TURNO - Tabela & modal ======
+  function renderTabelaModelos(){
+    const tbody = document.querySelector('#tblTurnosBase tbody');
+    tbody.innerHTML = '';
+
+    turnosBase.forEach(t=>{
+      const hIni = formatTime(t.HORA_INICIO);
+      const hFim = formatTime(t.HORA_FIM);
+      const iIni = formatTime(t.INTERVALO_INICIO);
+      const iFim = formatTime(t.INTERVALO_FIM);
+      const intervalo = (iIni && iFim) ? `${iIni}–${iFim}` : '-';
+
+      const dias = ['SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO']
+        .filter(d => String(t[d]).toLowerCase()==='true' || t[d]===1 || t[d]==='1')
+        .map(d => d.substring(0,3))
+        .join(',');
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.ID_TURNO_BASE || ''}</td>
+        <td>${t.TURNO_NOME || ''}</td>
+        <td>${t.TIPO_TURNO || ''}</td>
+        <td>${hIni} – ${hFim}</td>
+        <td>${intervalo}</td>
+        <td>${dias || '-'}</td>
+        <td>
+          <span class="chip ${t.ATIVO==='SIM'?'chip-active':''}">
+            ${t.ATIVO || ''}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="editarModelo('${t.ID_TURNO_BASE}')">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="excluirModelo('${t.ID_TURNO_BASE}')">Excluir</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('countModelosInfo').innerText =
+      `${turnosBase.length} modelo(s) de turno cadastrados.`;
+  }
+
+  function abrirNovoModelo(){
+    document.getElementById('frmTurnoBase').reset();
+    document.getElementById('ID_TURNO_BASE').value = '';
+    document.getElementById('modalTitleModelo').innerText = 'Novo modelo de turno';
+    modalModelo.show();
+  }
+
+  function editarModelo(id){
+    const t = turnosBase.find(x => String(x.ID_TURNO_BASE) === String(id));
+    if (!t) return;
+
+    document.getElementById('modalTitleModelo').innerText =
+      `Editar modelo #${id}`;
+
+    const timeFields = new Set(['HORA_INICIO','HORA_FIM','INTERVALO_INICIO','INTERVALO_FIM']);
+
+    CAB_FIELDS_MODELO.forEach(f=>{
+      const el = document.getElementById(f.id);
+      if (!el) return;
+
+      if (f.type === 'check'){
+        el.checked = String(t[f.id]).toLowerCase()==='true' || t[f.id]===1 || t[f.id]==='1';
+      } else if (timeFields.has(f.id)){
+        el.value = formatTime(t[f.id]);
+      } else {
+        el.value = t[f.id] || '';
+      }
+    });
+
+    modalModelo.show();
+  }
+
+  async function salvarModelo(){
+    const payload = {};
+    CAB_FIELDS_MODELO.forEach(f=>{
+      const el = document.getElementById(f.id);
+      if (!el) return;
+      payload[f.id] = (f.type==='check') ? el.checked : el.value;
+    });
+
+    showProgress('Salvando modelo de turno...');
+    const r = await apiPost('salvarTurnoBaseMaquina', payload);
+    if (!r.ok){
+      hideProgress();
+      alert('Erro ao salvar modelo de turno.');
+      return;
+    }
+
+    const tb = await apiGet('listarTurnosBaseMaquinas');
+    turnosBase = tb.turnosBase || [];
+    renderTabelaModelos();
+    preencherModeloDropdown();
+    renderPainel();
+    hideProgress();
+    modalModelo.hide();
+  }
+
+  async function excluirModelo(id){
+    if (!confirm('Excluir modelo de turno #' + id + '?')) return;
+
+    const form = new URLSearchParams();
+    form.append('action','excluirTurnoBaseMaquina');
+    form.append('id_turno_base', id);
+
+    showProgress('Excluindo modelo de turno...');
+    const r = await fetch(SCRIPT_URL, {method:'POST', body:form})
+      .then(x=>x.text())
+      .then(t=>{ try{return JSON.parse(t);}catch(e){return{ok:false,raw:t};} });
+
+    if (!r.ok){
+      hideProgress();
+      alert('Erro ao excluir modelo de turno.');
+      return;
+    }
+
+    const tb = await apiGet('listarTurnosBaseMaquinas');
+    turnosBase = tb.turnosBase || [];
+    renderTabelaModelos();
+    preencherModeloDropdown();
+    renderPainel();
+    hideProgress();
+  }
+
+  function preencherModeloDropdown(){
+    const sel = document.getElementById('selModeloAplicar');
+    sel.innerHTML = '<option value="">Selecione um modelo...</option>';
+    turnosBase.forEach(tb=>{
+      const opt = document.createElement('option');
+      opt.value = tb.ID_TURNO_BASE;
+      opt.textContent = `${tb.TURNO_NOME} (${formatTime(tb.HORA_INICIO)}–${formatTime(tb.HORA_FIM)})`;
+      sel.appendChild(opt);
+    });
+  }
+
+  // ====== TURNOS POR MÁQUINA ======
+  function renderTabelaTurnosMaquinas(){
+    const tbody = document.querySelector('#tblTurnosMaquinas tbody');
+    tbody.innerHTML = '';
+
+    // index auxiliar: id_equip -> lista de vinculos
+    const mapVinc = {};
+    vinculos.forEach(v=>{
+      const idEq = String(v.ID_EQUIPAMENTO || '').trim();
+      if (!idEq) return;
+      if (!mapVinc[idEq]) mapVinc[idEq] = [];
+      mapVinc[idEq].push(v);
+    });
+
+    // index modelos
+    const mapModelo = {};
+    turnosBase.forEach(tb=>{
+      mapModelo[String(tb.ID_TURNO_BASE || '').trim()] = tb;
+    });
+
+    equipamentos.forEach(eq=>{
+      const idEq = String(eq.id).trim();
+      const vincs = mapVinc[idEq] || [];
+
+      const nomesTurnos = vincs.map(v=>{
+        const m = mapModelo[String(v.ID_TURNO_BASE || '').trim()];
+        return m ? m.TURNO_NOME : `(ID ${v.ID_TURNO_BASE})`;
+      });
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="checkbox" class="chk-eq" data-id-eq="${idEq}" onchange="atualizarSelecionados()" /></td>
+        <td>${eq.tag}</td>
+        <td>${eq.nome}</td>
+        <td>${nomesTurnos.join(', ') || '<span class="small-muted">Sem turno definido</span>'}</td>
+        <td>
+          ${vincs.length ? `
+            <button class="btn btn-sm btn-outline-danger" onclick="limparVinculosEquipamento('${idEq}')">
+              Limpar
+            </button>` : ''}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('countTurnosMaquinasInfo').innerText =
+      `${equipamentos.length} equipamento(s) listados.`;
+    atualizarSelecionados();
+  }
+
+  function toggleSelectAllEquip(chk){
+    document.querySelectorAll('.chk-eq').forEach(c => c.checked = chk.checked);
+    atualizarSelecionados();
+  }
+
+  function atualizarSelecionados(){
+    const qtd = Array.from(document.querySelectorAll('.chk-eq')).filter(c => c.checked).length;
+    document.getElementById('lblSelecionados').innerText = qtd;
+  }
+
+  // === NOVA VERSÃO COM ANTI-DUPLICAÇÃO E PROGRESSO DETALHADO ===
+  async function aplicarModeloSelecionado(){
+    const modeloId = document.getElementById('selModeloAplicar').value;
+    if (!modeloId){
+      alert('Selecione um modelo de turno.');
+      return;
+    }
+
+    const selecionados = Array.from(document.querySelectorAll('.chk-eq'))
+      .filter(c => c.checked)
+      .map(c => c.dataset.idEq);
+
+    if (!selecionados.length){
+      alert('Selecione pelo menos um equipamento.');
+      return;
+    }
+
+    const modelo = turnosBase.find(tb => String(tb.ID_TURNO_BASE) === String(modeloId));
+    if (!modelo){
+      alert('Modelo não encontrado.');
+      return;
+    }
+
+    // trava controles e mostra progresso
+    setControlesTurnosMaquinaEnabled(false);
+    showProgress('Aplicando modelo aos equipamentos selecionados...');
+
+    const total = selecionados.length;
+    let feito = 0;
+    let criados = 0;
+    let ignorados = 0;
+
+    // index equipamentos por id
+    const mapEq = {};
+    equipamentos.forEach(eq => { mapEq[String(eq.id).trim()] = eq; });
+
+    // mapa de vínculos existentes: "idEq|idModelo"
+    const jaExiste = new Set();
+    vinculos.forEach(v => {
+      const idEq = String(v.ID_EQUIPAMENTO || '').trim();
+      const idTb = String(v.ID_TURNO_BASE || '').trim();
+      if (!idEq || !idTb) return;
+      jaExiste.add(`${idEq}|${idTb}`);
+    });
+
+    for (const idEq of selecionados){
+      const eq = mapEq[String(idEq)];
+      if (!eq) continue;
+
+      const chave = `${idEq}|${modeloId}`;
+      if (jaExiste.has(chave)) {
+        // já existe este modelo para esta máquina → não cria de novo
+        ignorados++;
+        feito++;
+        document.getElementById('progressMsg').innerText =
+          `Aplicando modelo aos equipamentos selecionados... (${feito}/${total})`;
+        continue;
+      }
+
+      const payload = {
+        ID_TURNO_MAQUINA: '', // novo
+        ID_EQUIPAMENTO: idEq,
+        TAG_EQUIPAMENTO: eq.tag,
+        NOME_EQUIPAMENTO: eq.nome,
+        ID_TURNO_BASE: modeloId,
+        ATIVO: 'SIM',
+        OBSERVACAO: ''
+      };
+
+      const r = await apiPost('salvarTurnoMaquinaVinculo', payload);
+      if (!r.ok){
+        console.log('Erro ao salvar vínculo para eq', idEq, r);
+      } else {
+        criados++;
+        jaExiste.add(chave); // garante que na mesma rodada não duplica
+      }
+
+      feito++;
+      document.getElementById('progressMsg').innerText =
+        `Aplicando modelo aos equipamentos selecionados... (${feito}/${total})`;
+    }
+
+    // recarrega vínculos
+    const tm = await apiGet('listarTurnosMaquinas');
+    vinculos = tm.vinculos || [];
+    renderTabelaTurnosMaquinas();
+    renderPainel();
+
+    hideProgress();
+    setControlesTurnosMaquinaEnabled(true);
+
+    alert(
+      `Processo concluído.\n` +
+      `• Novos vínculos criados: ${criados}\n` +
+      `• Equipamentos ignorados (já tinham este modelo): ${ignorados}`
+    );
+  }
+
+  async function limparVinculosEquipamento(idEq){
+    if (!confirm('Remover todos os vínculos de turno desta máquina?')) return;
+
+    showProgress('Removendo vínculos...');
+
+    const vincs = vinculos.filter(v => String(v.ID_EQUIPAMENTO || '').trim() === String(idEq).trim());
+
+    for (const v of vincs){
+      const form = new URLSearchParams();
+      form.append('action', 'excluirTurnoMaquinaVinculo');
+      form.append('id_turno_maquina', v.ID_TURNO_MAQUINA);
+      await fetch(SCRIPT_URL, {method:'POST', body: form})
+        .then(x=>x.text())
+        .then(t=>{ try{return JSON.parse(t);}catch(e){return{ok:false,raw:t};} });
+    }
+
+    const tm = await apiGet('listarTurnosMaquinas');
+    vinculos = tm.vinculos || [];
+    renderTabelaTurnosMaquinas();
+    renderPainel();
+    hideProgress();
+  }
+
+  init();
+</script>
+</body>
+</html>
