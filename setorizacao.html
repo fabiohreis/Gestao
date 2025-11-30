@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setorização de Equipamentos - Gestão de Manutenção</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f4f6f9;
+      padding-top: 70px;
+      font-family: "Segoe UI", sans-serif;
+      color: #243347;
+      padding-bottom: 30px;
+    }
+
+    .btn-voltar {
+      position: fixed;
+      top: 80px;
+      left: 20px;
+      background: #fff;
+      border: 2px solid #007bff;
+      color: #007bff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+
+    .btn-voltar:hover {
+      background: #007bff;
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    .form-container {
+      background: #fff;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 1100px;
+      margin: 0 auto 30px auto;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-section {
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      color: #495057;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.25);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+    }
+
+    .info-box {
+      background: #f5f7fb;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 10px;
+      border-left: 5px solid #5964e8;
+    }
+
+    .alert {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 700px;
+      text-align: center;
+      font-weight: 600;
+      z-index: 9999;
+      border-radius: 0 0 8px 8px;
+      animation: fadeInDown 0.4s ease-in-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translate(-50%, -30px); }
+      to   { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .alert-success {
+      background: linear-gradient(90deg, #3cb371, #2e8b57);
+      color: #fff;
+    }
+
+    .alert-danger {
+      background: linear-gradient(90deg, #dc3545, #b02a37);
+      color: #fff;
+    }
+
+    .loading {
+      color: #888;
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      color: #6c757d;
+      margin-top: 20px;
+    }
+
+    .table-responsive {
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    th {
+      background-color: #5964e8;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .badge-sem-setor {
+      background-color: #ffc107;
+      color: #212529;
+      font-weight: 600;
+    }
+
+    .small-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+
+    /* Ajustes para telas menores */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 60px;
+      }
+      .form-container {
+        padding: 20px 16px;
+        border-radius: 10px;
+      }
+      .btn-voltar {
+        top: 12px;
+        left: 12px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+      .form-header h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Botão voltar -->
+  <a href="estrutura_gestao.html" id="btn-voltar" class="btn-voltar">←</a>
+
+  <!-- Alerta global -->
+  <div id="alertBox" class="alert"></div>
+
+  <div class="container">
+    <div class="form-container">
+
+      <div class="form-header">
+        <h1><i class="fa-solid fa-diagram-project me-2"></i>Setorização de Equipamentos</h1>
+        <p class="text-muted mb-0">
+          Defina a alocação atual dos equipamentos nos setores da fábrica.
+        </p>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- ===================== SETORIZAÇÃO EM LOTE ===================== -->
+        <div class="col-12 form-section">
+          <div class="section-title">
+            <i class="fa-solid fa-layer-group"></i> Setorização em Lote
+          </div>
+
+          <p class="small-text">
+            Ative o filtro para exibir apenas os equipamentos sem setor atual
+            (coluna <strong>Setor Atual</strong> da aba <strong>Equipamentos</strong>).
+          </p>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <input id="buscaEquip" class="form-control"
+                     placeholder="Buscar por TAG ou nome"
+                     oninput="renderTabelaEquipamentos(document.getElementById('filtroSemSetor').checked)">
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+              <div class="form-check mt-2 mt-md-0">
+                <input id="filtroSemSetor" type="checkbox" class="form-check-input" checked
+                       onchange="renderTabelaEquipamentos(this.checked)">
+                <label for="filtroSemSetor" class="form-check-label">
+                  Mostrar apenas sem setor
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive mb-3">
+            <table class="table table-bordered table-striped align-middle">
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">
+                    <input type="checkbox" id="checkTodos" onclick="toggleSelecionarTodos(this)">
+                  </th>
+                  <th style="width:120px;">TAG</th>
+                  <th>Nome</th>
+                  <th style="width:200px;">Setor Atual</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaEquipamentosBody">
+                <tr>
+                  <td colspan="4" class="text-center small-text">Carregando equipamentos...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+              <label class="form-label">Setor de Destino *</label>
+              <select id="setorSelectLote" class="form-select">
+                <option value="">Carregando setores...</option>
+              </select>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Observações</label>
+              <input id="obsLote" class="form-control"
+                     placeholder="Ex: setorização inicial da planta, realocação em massa, etc.">
+            </div>
+            <div class="col-md-3 d-grid mt-2 mt-md-0">
+              <button id="btnRegistrarLote" class="btn btn-submit text-white"
+                      onclick="registrarSetorizacaoLote()">
+                <i id="iconBtnLote" class="fa-solid fa-floppy-disk me-2"></i>
+                <span id="textBtnLote">Aplicar setorização em lote</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- =================== SETORIZAÇÃO INDIVIDUAL =================== -->
+        <div class="col-12 form-section">
+          <div class="section-title">
+            <i class="fa-solid fa-microchip"></i> Setorização Individual
+          </div>
+
+          <label class="form-label">Selecione o equipamento *</label>
+          <select id="equipamentoSelect" class="form-select" onchange="carregarInfoEquipamento()">
+            <option value="">Carregando equipamentos...</option>
+          </select>
+        </div>
+
+        <div id="infoEquipamento" class="info-box" style="display:none;">
+          <h5><i class="fa-solid fa-circle-info me-2"></i>Informações do Equipamento</h5>
+          <p id="detalhesEquipamento" class="mb-0"></p>
+        </div>
+
+        <div class="col-12 form-section">
+          <div class="section-title">
+            <i class="fa-solid fa-layer-group"></i> Alocação no Setor
+          </div>
+
+          <label class="form-label">Selecione o setor *</label>
+          <select id="setorSelect" class="form-select">
+            <option value="">Carregando setores...</option>
+          </select>
+        </div>
+
+        <div class="col-12 form-section">
+          <div class="section-title">
+            <i class="fa-solid fa-note-sticky"></i> Informações Adicionais
+          </div>
+          <label class="form-label">Observações</label>
+          <textarea id="obs" class="form-control" rows="3"
+                    placeholder="Ex: movimentação preventiva, realocação temporária, etc."></textarea>
+        </div>
+
+        <div class="col-12 d-flex flex-column flex-md-row gap-3">
+          <button class="btn btn-secondary" onclick="limparFormulario()">
+            <i class="fa-solid fa-eraser me-2"></i>Limpar
+          </button>
+          <button id="btnRegistrar" class="btn btn-submit text-white"
+                  onclick="registrarSetorizacao()">
+            <i id="iconBtn" class="fa-solid fa-floppy-disk me-2"></i>
+            <span id="textBtn">Registrar Movimentação</span>
+          </button>
+        </div>
+
+        <div class="col-12 form-section mt-5">
+          <div class="section-title">
+            <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Movimentações
+          </div>
+          <div id="historicoContainer">
+            <p class="loading">Selecione um equipamento para visualizar o histórico...</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Gestão de Manutenção · © 2025
+  </footer>
+
+  <script>
+    const API_URL_ANTIGA = "https://script.google.com/macros/s/AKfycbwUcWZQ-D7ED1YY2Y9IfCv2H9zvmDF-G1UJyKkb_WitjFvng90ORnKiywQe4DHtEiHu/exec";
+    const API_URL_NOVA   = "https://script.google.com/macros/s/AKfycby6S21CgcvCqI9UoBW942LVCcA8f3BQqneQDHAAcp1eI4ulfUvX4qc6s7ADDdZKkIF97A/exec";
+
+    let equipamentosCache = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      carregarEquipamentos();
+      carregarSetores();
+
+      // Se estiver embutido em iframe, esconde botão voltar
+      if (window.top !== window.self) {
+        const btn = document.getElementById('btn-voltar') || document.querySelector('.btn-voltar');
+        if (btn) btn.style.display = 'none';
+      }
+    });
+
+    async function carregarEquipamentos() {
+      const select = document.getElementById("equipamentoSelect");
+      const tbody  = document.getElementById("tabelaEquipamentosBody");
+
+      try {
+        const res  = await fetch(`${API_URL_ANTIGA}?aba=Equipamentos`);
+        const data = await res.json();
+
+        const lista = Array.isArray(data)
+          ? data
+          : (Array.isArray(data.dados) ? data.dados : []);
+
+        equipamentosCache = (lista || []).map(linha => ({
+          tag:  linha.TAG || linha.Tag || linha.tag || "",
+          nome: linha["Nome do Equipamento"] || linha.Nome || linha.nome || "",
+          setorAtual: ""
+        }));
+
+        await Promise.all(
+          equipamentosCache.map(async (eq) => {
+            if (!eq.tag) return;
+            try {
+              const detRes = await fetch(`${API_URL_ANTIGA}?tag=${encodeURIComponent(eq.tag)}`);
+              const det    = await detRes.json();
+              eq.setorAtual = det["Setor Atual"] || det.Setor || det.setor || det.setorAtual || "";
+            } catch (e) {
+              console.log("Falha ao enriquecer TAG", eq.tag, e);
+              eq.setorAtual = "";
+            }
+          })
+        );
+
+        select.innerHTML = '<option value="">Selecione o equipamento...</option>';
+        equipamentosCache.forEach(eq => {
+          if (!eq.tag && !eq.nome) return;
+          const op = document.createElement("option");
+          op.value = eq.tag;
+          op.textContent = `${eq.tag} - ${eq.nome}`;
+          select.appendChild(op);
+        });
+
+        renderTabelaEquipamentos(true);
+
+      } catch (e) {
+        console.error(e);
+        select.innerHTML = '<option value="">Erro ao carregar equipamentos</option>';
+        tbody.innerHTML = `
+          <tr><td colspan="4" class="text-center text-danger small-text">
+            Erro ao carregar equipamentos.
+          </td></tr>`;
+      }
+    }
+
+    function renderTabelaEquipamentos(somenteSemSetor = true) {
+      const tbody = document.getElementById("tabelaEquipamentosBody");
+      const busca = (document.getElementById("buscaEquip").value || "").toLowerCase().trim();
+
+      if (!equipamentosCache.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="4" class="text-center small-text">
+            Nenhum equipamento encontrado.
+          </td></tr>`;
+        return;
+      }
+
+      let html = "";
+      let count = 0;
+
+      equipamentosCache.forEach(eq => {
+        const tag   = eq.tag || "";
+        const nome  = eq.nome || "";
+        const setor = eq.setorAtual || "";
+        const semSetor = !setor || setor.trim() === "";
+
+        if (somenteSemSetor && !semSetor) return;
+
+        if (busca &&
+           !(tag.toLowerCase().includes(busca) ||
+             nome.toLowerCase().includes(busca))) {
+          return;
+        }
+
+        count++;
+        html += `
+          <tr>
+            <td class="text-center">
+              <input type="checkbox" class="checkbox-equipamento" value="${tag}">
+            </td>
+            <td>${tag || "-"}</td>
+            <td>${nome || "-"}</td>
+            <td>${
+              semSetor
+                ? '<span class="badge badge-sem-setor">Sem setor</span>'
+                : setor
+            }</td>
+          </tr>`;
+      });
+
+      if (!count) {
+        tbody.innerHTML = `
+          <tr><td colspan="4" class="text-center small-text">
+            Nenhum equipamento encontrado com os filtros atuais.
+          </td></tr>`;
+      } else {
+        tbody.innerHTML = html;
+      }
+
+      const checkTodos = document.getElementById("checkTodos");
+      if (checkTodos) checkTodos.checked = false;
+    }
+
+    function toggleSelecionarTodos(source) {
+      document
+        .querySelectorAll(".checkbox-equipamento")
+        .forEach(ch => ch.checked = source.checked);
+    }
+
+    async function carregarSetores() {
+      const selectInd = document.getElementById("setorSelect");
+      const selectLote = document.getElementById("setorSelectLote");
+
+      try {
+        const res = await fetch(`${API_URL_ANTIGA}?aba=Setores`);
+        const data = await res.json();
+        const lista = Array.isArray(data)
+          ? data
+          : (Array.isArray(data.dados) ? data.dados : []);
+
+        const options = ['<option value="">Selecione o setor...</option>']
+          .concat(
+            (lista || []).map(s => {
+              const nome = s.Nome_Setor || s.nome || s.Nome || s.setor;
+              return `<option value="${nome}">${nome}</option>`;
+            })
+          ).join("");
+
+        selectInd.innerHTML = options;
+        selectLote.innerHTML = options;
+
+      } catch (e) {
+        console.error(e);
+        selectInd.innerHTML = '<option value="">Erro ao carregar setores</option>';
+        selectLote.innerHTML = '<option value="">Erro ao carregar setores</option>';
+      }
+    }
+
+    async function carregarInfoEquipamento() {
+      const tag = document.getElementById("equipamentoSelect").value;
+      const box = document.getElementById("infoEquipamento");
+      const detalhes = document.getElementById("detalhesEquipamento");
+      const histDiv = document.getElementById("historicoContainer");
+
+      if (!tag) {
+        box.style.display = "none";
+        histDiv.innerHTML = "<p class='loading'>Selecione um equipamento para visualizar o histórico...</p>";
+        return;
+      }
+
+      box.style.display = "block";
+      detalhes.innerHTML = "<span class='loading'>Carregando informações...</span>";
+
+      try {
+        const res = await fetch(`${API_URL_ANTIGA}?tag=${encodeURIComponent(tag)}`);
+        const data = await res.json();
+
+        const nome = data["Nome do Equipamento"] || data.Nome || data.nome || "";
+        const setorAtual = data["Setor Atual"] || data.Setor || data.setor || data.setorAtual || "<i>Não alocado</i>";
+        const dataEntradaBruta = data["Data de Entrada no Setor Atual"] || data.dataEntrada;
+        const dataEntradaFmt = dataEntradaBruta
+          ? new Date(dataEntradaBruta).toLocaleDateString("pt-BR")
+          : "-";
+
+        detalhes.innerHTML = `
+          <strong>TAG:</strong> ${data.TAG || data.Tag || data.tag || tag}<br>
+          <strong>Nome:</strong> ${nome || "-"}<br>
+          <strong>Setor Atual:</strong> ${setorAtual}<br>
+          <strong>Data de Entrada:</strong> ${dataEntradaFmt}
+        `;
+
+        const histRes = await fetch(`${API_URL_ANTIGA}?historico=${encodeURIComponent(tag)}`);
+        const historico = await histRes.json();
+        renderizarHistorico(historico);
+
+      } catch (e) {
+        console.error(e);
+        detalhes.innerHTML = "<span class='text-danger'>Erro ao carregar informações.</span>";
+      }
+    }
+
+    function renderizarHistorico(historico) {
+      const c = document.getElementById("historicoContainer");
+
+      if (!historico || !historico.length) {
+        c.innerHTML = "<p class='text-muted'>Nenhuma movimentação registrada.</p>";
+        return;
+      }
+
+      let html = `
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped align-middle">
+            <thead>
+              <tr>
+                <th>Setor</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th>Responsável</th>
+                <th>Observações</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      historico.forEach(h => {
+        html += `
+          <tr>
+            <td>${h.Setor || h.setor}</td>
+            <td>${h["Data de Entrada"] || h.Entrada || h.dataEntrada || ""}</td>
+            <td>${h["Data de Saída"] || h.Saida || h.dataSaida || ""}</td>
+            <td>${h.Responsavel || h.responsavel || ""}</td>
+            <td>${h.Observacoes || h.observacoes || ""}</td>
+          </tr>`;
+      });
+
+      html += "</tbody></table></div>";
+      c.innerHTML = html;
+    }
+
+    function mostrarAlerta(msg, tipo = "success") {
+      const box = document.getElementById("alertBox");
+      box.textContent = msg;
+      box.className = "alert alert-" + tipo;
+      box.style.display = "block";
+      setTimeout(() => box.style.display = "none", 3500);
+    }
+
+    function limparFormulario() {
+      document.getElementById("equipamentoSelect").value = "";
+      document.getElementById("setorSelect").value = "";
+      document.getElementById("obs").value = "";
+      document.getElementById("infoEquipamento").style.display = "none";
+      document.getElementById("historicoContainer").innerHTML =
+        "<p class='loading'>Selecione um equipamento para visualizar o histórico...</p>";
+    }
+
+    async function registrarMovimentacaoAPI(tag, setor, obs) {
+      const payload = { tag, setor, obs };
+
+      try {
+        const res = await fetch(API_URL_ANTIGA, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        let ok = res.ok;
+        try {
+          const j = await res.json();
+          if (j && j.status) ok = (j.status === "ok");
+        } catch (e) {}
+
+        if (!ok) return false;
+
+        try {
+          await fetch(API_URL_NOVA, {
+            method: "POST",
+            body: JSON.stringify({ tag })
+          });
+        } catch (e) {
+          console.log("Falha na API nova (ignorado):", e);
+        }
+
+        return true;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+
+    async function registrarSetorizacao() {
+      const tag   = document.getElementById("equipamentoSelect").value;
+      const setor = document.getElementById("setorSelect").value;
+      const obs   = document.getElementById("obs").value;
+
+      if (!tag || !setor) {
+        mostrarAlerta("Selecione o equipamento e o setor.", "danger");
+        return;
+      }
+
+      const btn  = document.getElementById("btnRegistrar");
+      const icon = document.getElementById("iconBtn");
+      const text = document.getElementById("textBtn");
+
+      btn.disabled = true;
+      icon.className = "fa-solid fa-spinner fa-spin me-2";
+      text.textContent = "Gravando...";
+
+      const ok = await registrarMovimentacaoAPI(tag, setor, obs);
+
+      if (ok) {
+        mostrarAlerta("Movimentação registrada com sucesso!", "success");
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        mostrarAlerta("Erro ao registrar movimentação.", "danger");
+      }
+
+      btn.disabled = false;
+      icon.className = "fa-solid fa-floppy-disk me-2";
+      text.textContent = "Registrar Movimentação";
+    }
+
+    async function registrarSetorizacaoLote() {
+      const setor = document.getElementById("setorSelectLote").value;
+      const obs   = document.getElementById("obsLote").value;
+      const selecionados = Array.from(
+        document.querySelectorAll(".checkbox-equipamento:checked")
+      ).map(cb => cb.value);
+
+      if (!setor) {
+        mostrarAlerta("Selecione o setor de destino.", "danger");
+        return;
+      }
+      if (!selecionados.length) {
+        mostrarAlerta("Selecione ao menos um equipamento.", "danger");
+        return;
+      }
+
+      const btn  = document.getElementById("btnRegistrarLote");
+      const icon = document.getElementById("iconBtnLote");
+      const text = document.getElementById("textBtnLote");
+
+      btn.disabled = true;
+      icon.className = "fa-solid fa-spinner fa-spin me-2";
+
+      const erros = [];
+
+      for (let i = 0; i < selecionados.length; i++) {
+        const tag = selecionados[i];
+        text.textContent = `Gravando ${i + 1} de ${selecionados.length}...`;
+
+        const ok = await registrarMovimentacaoAPI(tag, setor, obs);
+        if (!ok) erros.push(tag);
+      }
+
+      if (!erros.length) {
+        mostrarAlerta("Setorização em lote concluída com sucesso!", "success");
+      } else {
+        mostrarAlerta("Falha ao registrar para as TAGs: " + erros.join(", "), "danger");
+      }
+
+      setTimeout(() => window.location.reload(), 2000);
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

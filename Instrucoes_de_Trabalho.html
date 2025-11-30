@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instruções de Trabalho</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f5f7fa; font-family: "Inter", sans-serif; }
+    h1 { text-align: center; margin-top: 70px; color: #243347; }
+
+    /* Botão flutuante de voltar (igual às outras páginas) */
+    .btn-voltar {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #fff;
+      color: #1f3c88;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-decoration: none;
+      z-index: 1000;
+      transition: all 0.2s;
+    }
+    .btn-voltar:hover {
+      transform: scale(1.05);
+      background: #f0f2f8;
+    }
+
+    /* Cards modernos */
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .emoji { font-size: 1.3rem; margin-right: 8px; }
+
+    /* Inputs modernos */
+    input.form-control, select.form-select {
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input.form-control:focus, select.form-select:focus {
+      border-color: #1f3c88;
+      box-shadow: 0 0 0 0.2rem rgba(31,60,136,0.15);
+      outline: none;
+    }
+
+    /* Botões modernos */
+    .btn-success {
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn-success:hover {
+      background: #1f3c88;
+      border-color: #1f3c88;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .card-body { padding: 1.5rem; }
+
+    /* Ajustes para telas menores */
+    @media (max-width: 768px) {
+      h1 { margin-top: 60px; font-size: 1.35rem; }
+      .card-body { padding: 1.1rem; }
+      .btn-voltar {
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Botão flutuante de voltar -->
+  <a href="lancamento_preventivas.html"
+     id="btn-voltar"
+     class="btn-voltar"
+     onclick="voltarPagina(event)">←</a>
+
+  <div class="container mt-5">
+
+    <h1>🛠️ Instruções de Trabalho</h1>
+
+    <!-- Cadastro de Famílias -->
+    <div class="card">
+      <div class="card-header bg-primary text-white rounded-top">
+        <span class="emoji">🏷️</span> Cadastro de Famílias
+      </div>
+      <div class="card-body">
+        <form id="formFamilia">
+          <div class="mb-3">
+            <label for="nomeFamilia" class="form-label">Nome da Família</label>
+            <input type="text" class="form-control" id="nomeFamilia" placeholder="Ex: Ponte Rolante" required>
+          </div>
+          <button type="submit" class="btn btn-success">Salvar Família</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cadastro de Equipamentos -->
+    <div class="card">
+      <div class="card-header bg-primary text-white rounded-top">
+        <span class="emoji">⚙️</span> Cadastro de Equipamentos
+      </div>
+      <div class="card-body">
+        <form id="formEquipamento">
+          <div class="mb-3">
+            <label for="familiaEquipamento" class="form-label">Família</label>
+            <select id="familiaEquipamento" class="form-select" required>
+              <option value="">Selecione...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="tagEquipamento" class="form-label">TAG do Equipamento</label>
+            <select id="tagEquipamento" class="form-select" required>
+              <option value="">Selecione a TAG disponível...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nome do Equipamento</label>
+            <input type="text" class="form-control" id="nomeEquipamento" readonly>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Localização</label>
+            <input type="text" class="form-control" id="localizacaoEquipamento" readonly>
+          </div>
+          <button type="submit" class="btn btn-success">Salvar Equipamento</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cadastro de Perguntas -->
+    <div class="card">
+      <div class="card-header bg-primary text-white rounded-top">
+        <span class="emoji">📋</span> Cadastro de Perguntas (Checklists)
+      </div>
+      <div class="card-body">
+        <form id="formPergunta">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="familiaPergunta" class="form-label">Família *</label>
+              <select id="familiaPergunta" class="form-select" required>
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="tipoManutencao" class="form-label">Tipo de Manutenção *</label>
+              <select id="tipoManutencao" class="form-select" required>
+                <option value="">Selecione...</option>
+                <option value="Semanal">Preventiva Semanal</option>
+                <option value="Mensal">Preventiva Mensal</option>
+                <option value="Anual">Preventiva Anual</option>
+                <option value="Preditiva">Preditiva</option>
+                <option value="Geral">Geral (Todas)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="textoPergunta" class="form-label">Pergunta *</label>
+            <input type="text" class="form-control" id="textoPergunta" 
+                   placeholder="Ex: Verificar estado dos cabos de aço" required>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="tipoResposta" class="form-label">Tipo de Resposta *</label>
+              <select id="tipoResposta" class="form-select" required>
+                <option value="">Selecione...</option>
+                <option value="checkbox">Checkbox (OK/NOK)</option>
+                <option value="texto">Texto Livre</option>
+                <option value="lista">Lista de Opções</option>
+                <option value="numero">Número</option>
+                <option value="medicao">Medição</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="opcoesResposta" class="form-label">Opções de Resposta</label>
+              <input type="text" class="form-control" id="opcoesResposta" 
+                     placeholder="Ex: Normal;Alta;Crítica">
+              <div class="form-text">Apenas para tipo "Lista". Separe por ponto e vírgula (;)</div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">
+            💾 Salvar Pergunta
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Perguntas Cadastradas -->
+    <div class="card">
+      <div class="card-header bg-primary text-white rounded-top">
+        <span class="emoji">📝</span> Perguntas Cadastradas
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Filtrar por Família</label>
+              <select id="filtroFamilia" class="form-select">
+                <option value="">Todas as famílias</option>
+              </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end mt-2 mt-md-0">
+              <button id="btnAtualizarLista" class="btn btn-outline-primary w-100">
+                🔄 Atualizar Lista
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Família</th>
+                <th>Tipo</th>
+                <th>Pergunta</th>
+                <th>Tipo Resposta</th>
+                <th>Opções</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPerguntas">
+              <tr>
+                <td colspan="6" class="text-center text-muted">
+                  Nenhuma pergunta cadastrada
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Toast de Notificação -->
+<div class="toast-container position-fixed top-50 start-50 translate-middle">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 280px; max-width: 420px;">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Mensagem do Sistema</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+      </div>
+      <div class="modal-body p-3" id="toastMessage" style="min-height: 60px; display: flex; align-items: center; justify-content: center;">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="toast">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIGURAÇÕES GERAIS =====
+const scriptUrlPerguntas = "https://script.google.com/macros/s/AKfycbxBiX_0XhQh0h3UWbgvaYSM9Jb4xkXR2pmcKyxhN8DtbmDKAs6FGEYpVEwu0zypv3Xx/exec";
+
+function voltarPagina(event){
+  event.preventDefault();
+  if (window.history.length > 1) window.history.back();
+  else window.location.href = "lancamento_preventivas.html";
+}
+
+// ===== NOTIFICAÇÃO TOAST =====
+function mostrarNotificacao(mensagem, tipo = 'sucesso') {
+  const toastEl = document.getElementById('liveToast');
+  const toastMessage = document.getElementById('toastMessage');
+  
+  let icone = '✅';
+  if (tipo === 'erro') icone = '❌';
+  if (tipo === 'aviso') icone = '⚠️';
+  
+  toastMessage.innerHTML = `${icone} ${mensagem}`;
+  const toast = new bootstrap.Toast(toastEl, { 
+    delay: 5000,
+    autohide: true
+  });
+  toast.show();
+}
+
+// ===== CADASTRO DE FAMÍLIAS =====
+const scriptUrlFamilias = "https://script.google.com/macros/s/AKfycbwsxS1u_Zs_ji_Dc134eSf9ECQC0z8mJn9xHYq9tQtue4Snlx5RLOAUIa3V7dzZk_2A/exec";
+
+document.getElementById("formFamilia").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  
+  const nomeFamilia = document.getElementById("nomeFamilia").value.trim();
+  
+  if (!nomeFamilia) {
+    mostrarNotificacao("Por favor, digite um nome para a família", 'erro');
+    return;
+  }
+  
+  const botao = this.querySelector('button');
+  const textoOriginal = botao.textContent;
+  botao.textContent = "Salvando...";
+  botao.disabled = true;
+  
+  try {
+    const data = { nomeFamilia: nomeFamilia };
+    const res = await fetch(scriptUrlFamilias, { 
+      method: "POST", 
+      body: JSON.stringify(data) 
+    });
+    
+    const resultado = await res.json();
+    
+    if (resultado.status === "sucesso") {
+      mostrarNotificacao(`${resultado.mensagem}<br><strong>ID: ${resultado.id}</strong>`);
+      this.reset();
+      await carregarFamilias();
+    } else {
+      mostrarNotificacao(`${resultado.mensagem}`, 'erro');
+    }
+  } catch (err) {
+    mostrarNotificacao(`Erro de conexão: ${err.message}`, 'erro');
+  } finally {
+    botao.textContent = textoOriginal;
+    botao.disabled = false;
+  }
+});
+
+// ===== VINCULAÇÃO DE EQUIPAMENTOS =====
+const scriptUrlVinculo = "https://script.google.com/macros/s/AKfycbxQ1Ru96KipkiN7ypMfU_SoFCr2MuyjuFO0CcGu5X_MRKLC5Q7ZnEvL20SB8InYnYSK/exec";
+
+async function carregarFamilias() {
+  try {
+    const res = await fetch(`${scriptUrlVinculo}?tipo=familias`);
+    const data = await res.json();
+    
+    const selectFamilia = document.getElementById("familiaEquipamento");
+    const selectFamiliaPergunta = document.getElementById("familiaPergunta");
+    const selectFiltroFamilia = document.getElementById("filtroFamilia");
+    
+    [selectFamilia, selectFamiliaPergunta, selectFiltroFamilia].forEach(select => {
+      if (select) select.innerHTML = '<option value="">Selecione...</option>';
+    });
+    
+    if (data.status === "sucesso" && data.data && data.data.length > 0) {
+      data.data.forEach(familia => {
+        if (selectFamilia) {
+          const option1 = document.createElement("option");
+          option1.value = familia;
+          option1.textContent = familia;
+          selectFamilia.appendChild(option1);
+        }
+        if (selectFamiliaPergunta) {
+          const option2 = document.createElement("option");
+          option2.value = familia;
+          option2.textContent = familia;
+          selectFamiliaPergunta.appendChild(option2);
+        }
+        if (selectFiltroFamilia) {
+          const option3 = document.createElement("option");
+          option3.value = familia;
+          option3.textContent = familia;
+          selectFiltroFamilia.appendChild(option3);
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Erro ao carregar famílias:", err);
+    mostrarNotificacao("Erro ao carregar famílias", 'erro');
+  }
+}
+
+async function carregarEquipamentos() {
+  try {
+    const res = await fetch(`${scriptUrlVinculo}?tipo=equipamentos`);
+    const data = await res.json();
+    
+    const selectTag = document.getElementById("tagEquipamento");
+    if (!selectTag) return;
+    
+    selectTag.innerHTML = '<option value="">Selecione a TAG disponível...</option>';
+    
+    if (data.status === "sucesso" && data.data && data.data.length > 0) {
+      data.data.forEach(equip => {
+        const option = document.createElement("option");
+        option.value = equip.tag;
+        option.textContent = equip.tag;
+        option.dataset.nome = equip.nome;
+        option.dataset.localizacao = equip.localizacao;
+        selectTag.appendChild(option);
+      });
+    }
+  } catch (err) {
+    console.error("Erro ao carregar equipamentos:", err);
+    mostrarNotificacao("Erro ao carregar equipamentos", 'erro');
+  }
+}
+
+document.getElementById("tagEquipamento").addEventListener("change", function() {
+  const selectedOption = this.selectedOptions[0];
+  document.getElementById("nomeEquipamento").value = selectedOption ? (selectedOption.dataset.nome || "") : "";
+  document.getElementById("localizacaoEquipamento").value = selectedOption ? (selectedOption.dataset.localizacao || "") : "";
+});
+
+document.getElementById("formEquipamento").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  
+  const familia = document.getElementById("familiaEquipamento").value;
+  const tag = document.getElementById("tagEquipamento").value;
+  
+  if (!familia || !tag) {
+    mostrarNotificacao("Por favor, selecione uma família e um equipamento", 'erro');
+    return;
+  }
+  
+  const botao = this.querySelector('button');
+  const textoOriginal = botao.textContent;
+  botao.textContent = "Vinculando...";
+  botao.disabled = true;
+  
+  try {
+    const data = { familia, tagEquipamento: tag };
+    const res = await fetch(scriptUrlVinculo, { method: "POST", body: JSON.stringify(data) });
+    const resultado = await res.json();
+    
+    if (resultado.status === "sucesso") {
+      mostrarNotificacao(`${resultado.mensagem}`);
+      this.reset();
+      document.getElementById("nomeEquipamento").value = "";
+      document.getElementById("localizacaoEquipamento").value = "";
+      await carregarEquipamentos();
+    } else {
+      mostrarNotificacao(`${resultado.mensagem}`, 'erro');
+    }
+  } catch (err) {
+    mostrarNotificacao(`Erro de conexão: ${err.message}`, 'erro');
+  } finally {
+    botao.textContent = textoOriginal;
+    botao.disabled = false;
+  }
+});
+
+// ===== CADASTRO DE PERGUNTAS =====
+document.getElementById("formPergunta").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  
+  const familia = document.getElementById("familiaPergunta").value;
+  const tipoManutencao = document.getElementById("tipoManutencao").value;
+  const textoPergunta = document.getElementById("textoPergunta").value.trim();
+  const tipoResposta = document.getElementById("tipoResposta").value;
+  const opcoesResposta = document.getElementById("opcoesResposta").value.trim();
+  
+  if (!familia || !tipoManutencao || !textoPergunta || !tipoResposta) {
+    mostrarNotificacao("Por favor, preencha todos os campos obrigatórios", 'erro');
+    return;
+  }
+  
+  if (tipoResposta === "lista" && !opcoesResposta) {
+    mostrarNotificacao("Para tipo 'Lista', é necessário informar as opções", 'erro');
+    return;
+  }
+  
+  const botao = this.querySelector('button');
+  const textoOriginal = botao.textContent;
+  botao.textContent = "Salvando...";
+  botao.disabled = true;
+  
+  try {
+    const data = {
+      action: "cadastrarPergunta",
+      familia,
+      tipoManutencao,
+      textoPergunta,
+      tipoResposta,
+      opcoesResposta,
+      usuario: "Sistema"
+    };
+    
+    const res = await fetch(scriptUrlPerguntas, { method: "POST", body: JSON.stringify(data) });
+    const resultado = await res.json();
+    
+    if (resultado.status === "sucesso") {
+      mostrarNotificacao(`${resultado.mensagem}<br><strong>ID: ${resultado.id}</strong>`);
+      this.reset();
+      await carregarPerguntas();
+    } else {
+      mostrarNotificacao(`${resultado.mensagem}`, 'erro');
+    }
+  } catch (err) {
+    mostrarNotificacao(`Erro de conexão: ${err.message}`, 'erro');
+  } finally {
+    botao.textContent = textoOriginal;
+    botao.disabled = false;
+  }
+});
+
+// ===== CARREGAR E EXIBIR PERGUNTAS =====
+async function carregarPerguntas() {
+  try {
+    const res = await fetch(`${scriptUrlPerguntas}?tipo=perguntasExistentes`);
+    const data = await res.json();
+    
+    const tbody = document.getElementById("tabelaPerguntas");
+    if (!tbody) return;
+    
+    if (data.status === "sucesso" && data.data && data.data.length > 0) {
+      const filtroFamilia = document.getElementById("filtroFamilia").value;
+      const perguntasFiltradas = data.data.filter(pergunta => {
+        const matchFamilia = !filtroFamilia || pergunta.familia === filtroFamilia;
+        return matchFamilia;
+      });
+      
+      if (perguntasFiltradas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Nenhuma pergunta encontrada com os filtros aplicados</td></tr>`;
+        return;
+      }
+      
+      tbody.innerHTML = perguntasFiltradas.map(pergunta => `
+        <tr>
+          <td><strong>${pergunta.id}</strong></td>
+          <td>${pergunta.familia}</td>
+          <td><span class="badge bg-info">${pergunta.tipoManutencao}</span></td>
+          <td>${pergunta.pergunta}</td>
+          <td><span class="badge bg-secondary">${pergunta.tipoResposta}</span></td>
+          <td>${pergunta.opcoes || '-'}</td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Nenhuma pergunta cadastrada</td></tr>`;
+    }
+  } catch (err) {
+    console.error("Erro ao carregar perguntas:", err);
+    mostrarNotificacao("Erro ao carregar perguntas", 'erro');
+  }
+}
+
+document.getElementById("filtroFamilia").addEventListener("change", carregarPerguntas);
+document.getElementById("btnAtualizarLista").addEventListener("click", carregarPerguntas);
+
+// ===== INICIALIZAÇÃO =====
+document.addEventListener("DOMContentLoaded", function() {
+  carregarFamilias();
+  carregarEquipamentos();
+  carregarPerguntas();
+
+  // Se estiver em um iframe (embutido em outra página), esconde o botão Voltar
+  if (window.top !== window.self) {
+    const btn = document.getElementById('btn-voltar') || document.querySelector('.btn-voltar');
+    if (btn) btn.style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>
