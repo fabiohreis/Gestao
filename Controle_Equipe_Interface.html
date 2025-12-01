@@ -83,10 +83,6 @@
 <li data-section="escalas">📅 Escalas</li>
 <li data-section="ferias">🏖️ Férias / Licenças</li>
 <li data-section="turnos">⏰ Turnos</li>
-<!-- BOTÃO VOLTAR COMO ITEM DE MENU -->
-<li onclick="history.back()" style="margin-top:12px; background:#374151;">
-⬅️ Voltar
-</li>
 </ul>
 </aside>
 
@@ -413,6 +409,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
   let mantenedores=[], turnos=[], ferias=[], escalas=[], jornadas=[], pausas=[], pausasMant=[];
   let pausasAll = [];
   let pausasMantAll = [];
+  let feriasAll = [];   // <-- TODAS as férias/licenças para uso no painel
 
   const jornadaCache = new Map();
   async function getJornadaCached(idMantenedor){
@@ -440,7 +437,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     md.style.display = on ? 'flex' : 'none';
   }
 
-  // ===== NOVO: wrapper universal de loading para QUALQUER ação =====
+  // wrapper universal de loading
   async function runWithLoading(message, fn){
     try{
       setLoading(true, message || 'Processando...');
@@ -479,7 +476,6 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     document.querySelectorAll('.nav-links li').forEach(li=>li.classList.remove('active'));
     document.querySelector(`.nav-links li[data-section="${id}"]`).classList.add('active');
 
-    // carrega quando abrir a aba (com loading)
     if(id==='dashboard') runWithLoading('Carregando Painel...', carregarPainelDia);
     if(id==='mantenedores') runWithLoading('Carregando mantenedores...', carregarMantenedoresTabela);
     if(id==='turnos') runWithLoading('Carregando turnos...', carregarTurnosTabela);
@@ -646,7 +642,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     });
   }
 
-  // ===== JORNADA =====
+  // JORNADA
   function getDiasSelecionados(){ return [...document.querySelectorAll('.jor-dia:checked')].map(cb=>cb.value); }
   function limparDiasSelecionados(){ document.querySelectorAll('.jor-dia').forEach(cb=>cb.checked=false); }
 
@@ -736,7 +732,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     });
   }
 
-  // ===== PAUSAS TURNO =====
+  // PAUSAS TURNO
   async function carregarPausasTurno(){
     const filtro=$('pau-turno-filtro').value||null;
     pausas=await apiCall('getPausasTurno',filtro?{idTurno:filtro}:null,'GET')||[];
@@ -805,7 +801,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     });
   }
 
-  // ===== PAUSAS MANTENEDOR =====
+  // PAUSAS MANTENEDOR
   async function carregarPausasMantenedor(){
     const idM=$('pm-mantenedor-filtro').value||null;
     const idT=$('pm-turno-filtro').value||null;
@@ -887,7 +883,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     });
   }
 
-  // ===== ESCALAS / FERIAS =====
+  // ESCALAS / FÉRIAS
   async function carregarEscalasData(){
     if(!$('data-escalas').value)$('data-escalas').value=hojeISO();
     const d=$('data-escalas').value;
@@ -939,6 +935,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
 
   async function carregarFeriasTabela(){
     ferias=await apiCall('getFeriasLicencas')||[];
+    feriasAll = ferias.slice(); // mantém cache global para o painel
     const tb=$('tabela-ferias');tb.innerHTML='';
     if(!ferias.length){
       tb.innerHTML=`<tr><td colspan="6" class="text-center text-muted">Sem registros.</td></tr>`;
@@ -971,12 +968,13 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
       const r=await apiCall('salvarFerias',f,'POST');
       alertar(r.message,'success');
       limparFormFerias();
-      await carregarFeriasTabela();
-      await carregarPainelDia();
+      await carregarFeriasTabela();          // atualiza tabela
+      feriasAll = await apiCall('getFeriasLicencas') || []; // garante cache atualizado
+      await carregarPainelDia();             // recalcula HH
     });
   }
 
-  // ===== PAINEL =====
+  // PAINEL
   function isoDayFromDateStr(dateStr){
     const d=new Date(dateStr+'T00:00:00');
     const js=d.getDay();
@@ -1018,7 +1016,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
 
   async function carregarPainelDia(){
     if(!$('dash-data').value) $('dash-data').value=hojeISO();
-    const dataStr=$('dash-data').value;
+    const dataStr=$('dash-data').value;           // yyyy-mm-dd
     const diaSemana=isoDayFromDateStr(dataStr);
     selecionarDiaBotao(diaSemana);
 
@@ -1029,6 +1027,15 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     let totalDiaMin=0;
 
     for(const m of ativos){
+
+      // ----- NOVO: se estiver em férias/licença/afastamento neste dia, pula -----
+      const emFerias = feriasAll.some(f =>
+        String(f.idMantenedor) === String(m.id) &&
+        f.dataInicio <= dataStr &&
+        f.dataFim >= dataStr
+      );
+      if(emFerias) continue;
+
       const escala = escalasDia.find(e=>String(e.idMantenedor)===String(m.id));
       let idTurno = escala ? escala.idTurno : null;
 
@@ -1114,7 +1121,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     }
   }
 
-  // ===== INIT =====
+  // INIT
   async function init(){
     try{
       const hoje = hojeISO();
@@ -1122,11 +1129,12 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
       $('data-escalas').value=hoje;
       $('dash-data').value=hoje;
 
-      const pMants  = apiCall('getMantenedores');
-      const pTurns  = apiCall('getTurnos');
-      const pStats  = apiCall('getEstatisticas');
-      const pPausas = apiCall('getPausasTurno');
-      const pPausasM= apiCall('getPausasMantenedor');
+      const pMants   = apiCall('getMantenedores');
+      const pTurns   = apiCall('getTurnos');
+      const pStats   = apiCall('getEstatisticas');
+      const pPausas  = apiCall('getPausasTurno');
+      const pPausasM = apiCall('getPausasMantenedor');
+      const pFerias  = apiCall('getFeriasLicencas'); // <-- inclui férias no carregamento inicial
 
       setLoading(true,'Carregando Mantenedores...');
       mantenedores = await pMants || [];
@@ -1139,6 +1147,9 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
       setLoading(true,'Atualizando Disponibilidade...');
       pausasAll     = await pPausas  || [];
       pausasMantAll = await pPausasM || [];
+
+      setLoading(true,'Carregando férias/licenças...');
+      feriasAll = await pFerias || [];
 
       setLoading(true,'Carregando Painel...');
       const s = await pStats || {};
@@ -1158,7 +1169,7 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
     }
   }
 
-  // ===== EVENTOS =====
+  // EVENTOS
   document.querySelectorAll('.nav-links li').forEach(li=>{
     li.addEventListener('click',()=>showSection(li.dataset.section));
   });
@@ -1212,4 +1223,3 @@ Use quando um mantenedor tiver pausas fixas diferentes do padrão do turno (aba 
 </script>
 </body>
 </html>
-
