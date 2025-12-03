@@ -1,168 +1,672 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Solicitação de Manutenção Corretiva - Gestão de Manutenção</title>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Solicitação de Manutenção Corretiva</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous"
+  >
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QXa0Cbl+z9WcJq4rC4h6Cw5q8sg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 
   <style>
     :root {
-      --primary: #2c5aa0;
-      --secondary: #1e3d6f;
-      --accent: #e74c3c;
-      --success: #27ae60;
-      --warning: #f39c12;
-      --gray-dark: #2c3e50;
-      --gray-medium: #7f8c8d;
-      --gray-light: #ecf0f1;
-    }
-    
-    body {
-      background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
-      padding: 20px;
-      font-family: "Segoe UI", sans-serif;
-      color: var(--gray-dark);
-      min-height: 100vh;
+      --cor-principal: #0d6efd;
+      --cor-principal-escura: #0a58ca;
+      --cor-fundo: #f8f9fa;
+      --cor-card: #ffffff;
+      --cor-borda: #dee2e6;
+      --cor-texto: #212529;
+      --cor-erro: #dc3545;
+      --cor-sucesso: #198754;
+      --cor-aviso: #ffc107;
     }
 
-    .btn-voltar {
-      background: #fff;
-      border: 2px solid var(--primary);
-      color: var(--primary);
-      padding: 10px 20px;
-      border-radius: 8px;
-      display: inline-flex;
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e3f2fd 0, #f8f9fa 50%);
+      color: var(--cor-texto);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .app-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 24px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.15),
+        0 2px 6px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 40%, #051a4a 100%);
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .app-header-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 30% 20%, #ffffff 0, rgba(255,255,255,0.5) 30%, transparent 60%) #0b5ed7;
+      display: flex;
       align-items: center;
       justify-content: center;
-      text-decoration: none;
+      font-size: 26px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    .app-header-text h1 {
+      font-size: 1.25rem;
+      margin: 0;
       font-weight: 600;
-      margin-bottom: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .btn-voltar:hover {
-      background: var(--primary);
-      color: white;
-      transform: translateY(-2px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .industrial-container {
-      background: white;
-      border-radius: 12px;
-      padding: 40px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      max-width: 900px;
-      margin: 0 auto;
-      border: 1px solid #ddd;
+    .app-header-text h1 span.badge {
+      background-color: rgba(15, 23, 42, 0.2);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .industrial-header {
-      text-align: center;
-      margin-bottom: 40px;
-      border-bottom: 3px solid var(--primary);
-      padding-bottom: 20px;
+    .app-header-text p {
+      margin: 2px 0 0;
+      font-size: 0.85rem;
+      opacity: 0.85;
     }
 
-    .industrial-header h1 {
-      font-weight: 700;
-      color: var(--gray-dark);
-      font-size: 2rem;
+    .app-header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+
+    .app-header-right .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.25);
+      border: 1px solid rgba(226, 232, 240, 0.3);
+      font-size: 0.75rem;
+    }
+
+    .app-header-right .status-pill i {
+      color: #22c55e;
+    }
+
+    .app-header-right .info-mini {
+      display: flex;
+      gap: 12px;
+      opacity: 0.8;
+    }
+
+    .app-header-right .info-mini span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .app-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr);
+      gap: 0;
+      padding: 16px 16px 20px;
+    }
+
+    @media (max-width: 992px) {
+      .app-main {
+        grid-template-columns: 1fr;
+      }
+      .app-container {
+        margin: 12px;
+      }
+    }
+
+    .painel-etapas {
+      padding: 16px 16px 16px 20px;
+      border-right: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .painel-equipamento {
+      padding: 16px;
+      background: radial-gradient(circle at top right, rgba(13, 110, 253, 0.03), transparent 60%);
+    }
+
+    .steps {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background-color: #f1f5f9;
+      border: 1px solid transparent;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      color: #64748b;
+    }
+
+    .step span {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .step-label {
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .step.current {
+      background: linear-gradient(to right, #e0f2fe, #f5f3ff);
+      border-color: rgba(37, 99, 235, 0.5);
+      color: #0f172a;
+    }
+
+    .step.current span {
+      background: #0d6efd;
+      color: #fff;
+    }
+
+    .step.done {
+      background: #ecfdf3;
+      border-color: rgba(22, 163, 74, 0.5);
+      color: #166534;
+    }
+
+    .step.done span {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .progress-container {
       margin-bottom: 10px;
     }
 
-    .industrial-header p {
-      color: var(--gray-medium);
-      font-size: 1.1rem;
-      margin-bottom: 0;
-      font-weight: 500;
+    .progress {
+      height: 6px;
+      border-radius: 999px;
+      background-color: #e2e8f0;
+      overflow: hidden;
     }
 
-    .industrial-section {
-      margin-bottom: 30px;
-      padding: 25px;
-      background: var(--gray-light);
+    .progress-bar-custom {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #0d6efd, #22c55e);
+      width: 0%;
+      transition: width 0.4s ease-out;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 0.75rem;
+      color: #475569;
+    }
+
+    .mensagem {
+      display: none;
+      margin-bottom: 10px;
+      padding: 8px 10px;
       border-radius: 10px;
-      border-left: 4px solid var(--primary);
-      transition: all 0.3s ease;
+      font-size: 0.85rem;
     }
 
-    .industrial-section:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .mensagem.sucesso {
+      display: block;
+      background-color: #ecfdf3;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .mensagem.erro {
+      display: block;
+      background-color: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .card-form {
+      background-color: var(--cor-card);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 16px 16px 6px;
     }
 
     .section-title {
-      color: var(--gray-dark);
+      font-size: 0.95rem;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 2px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 1.2rem;
+      gap: 6px;
+      color: #0f172a;
     }
 
     .section-title i {
-      color: var(--primary);
-      font-size: 1.3rem;
+      color: #0d6efd;
     }
 
-    .form-label {
+    .section-subtitle {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    label.form-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .form-control,
+    .form-select {
+      font-size: 0.85rem;
+      border-radius: 10px;
+      border-color: rgba(148, 163, 184, 0.7);
+      padding: 7px 10px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.2);
+      border-color: #0d6efd;
+    }
+
+    .equipamento-card {
+      border-radius: 16px;
+      background: linear-gradient(145deg, #0f172a, #020617);
+      color: #e5e7eb;
+      padding: 16px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .equipamento-card::before {
+      content: '';
+      position: absolute;
+      inset: -50px;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.3) 0, transparent 50%),
+        radial-gradient(circle at bottom right, rgba(22,163,74,0.2) 0, transparent 55%);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .equipamento-card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .equipamento-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .equipamento-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .equipamento-titulo {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+    }
+
+    .equipamento-nome {
+      font-size: 1.05rem;
       font-weight: 600;
-      color: var(--gray-dark);
-      margin-bottom: 10px;
-      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .form-control:focus, .form-select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+    .equipamento-nome span.chip-tag {
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #e5e7eb;
+      background-color: rgba(15,23,42,0.7);
     }
 
-    .btn-industrial {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      border: none;
-      padding: 12px 35px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      transition: all 0.3s;
-      color: white;
-      border-radius: 8px;
+    .equipamento-icone {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fefce8 0, #f97316 35%, #9a3412 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.8),
+        0 10px 25px rgba(15,23,42,0.95);
     }
 
-    .btn-industrial:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
-      color: white;
+    .equipamento-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .equipamento-info-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 12px;
+      background-color: rgba(15,23,42,0.7);
+      border: 1px solid rgba(55,65,81,0.8);
+      font-size: 0.75rem;
+    }
+
+    .equipamento-info-item span.label {
+      color: #9ca3af;
+    }
+
+    .equipamento-info-item span.value {
+      font-weight: 500;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .equipamento-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,0.6);
+      background-color: rgba(22,163,74,0.2);
+      color: #bbf7d0;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .equipamento-status-pill i {
+      color: #22c55e;
+    }
+
+    .equipamento-nao-operando .equipamento-status-pill {
+      border-color: rgba(248,113,113,0.7);
+      background-color: rgba(127,29,29,0.7);
+      color: #fecaca;
+    }
+
+    .equipamento-nao-operando {
+      border: 1px solid rgba(248,113,113,0.6);
+      box-shadow:
+        0 0 0 1px rgba(127,29,29,0.5),
+        0 12px 30px rgba(127,29,29,0.7);
+    }
+
+    .equipamento-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .equipamento-footer .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .equipamento-footer .badge-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background-color: rgba(15,23,42,0.75);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-equipamento {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-equipamento .status-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-equipamento .form-check {
+      margin: 0;
+    }
+
+    .status-parado {
+      color: #fecaca;
+    }
+
+    .status-funcionando {
+      color: #bbf7d0;
     }
 
     .setores-area {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 15px;
-      border: 2px solid #bdc3c7;
+      border-radius: 10px;
+      border: 1px dashed rgba(148, 163, 184, 0.8);
+      padding: 8px;
+      background-color: #f8fafc;
+      min-height: 42px;
     }
 
     .setores-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 6px;
     }
 
     .setor-badge {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 500;
-      font-size: 0.85rem;
-      display: flex;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background-color: #e5e7eb;
+      font-size: 0.7rem;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s ease;
+    }
+
+    .setor-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background-color: #0d6efd;
+    }
+
+    .setor-badge.empty {
+      border-style: dashed;
+      border-color: #cbd5f5;
+      background-color: #eff6ff;
+      color: #64748b;
+    }
+
+    .equipamento-card-footer-info {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .form-rodape {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      padding-inline: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-outline-secondary {
+      border-radius: 999px;
+      padding-inline: 14px;
+      font-size: 0.8rem;
+    }
+
+    .badge-turno {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.7rem;
+    }
+
+    .app-footer {
+      padding: 8px 16px;
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      background: #f8fafc;
+    }
+
+    .app-footer span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .app-footer span i {
+      font-size: 0.8rem;
+    }
+
+    .equipamento-icon-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 20% 20%, #60a5fa 0, transparent 45%),
+        radial-gradient(circle at 80% 80%, #f97316 0, transparent 55%);
+      mix-blend-mode: screen;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background-color: rgba(15, 23, 42, 0.25);
+      font-size: 0.7rem;
+      color: #e5e7eb;
+    }
+
+    .header-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background-color: #22c55e;
+    }
+
+    .step-label {
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .header-badge span i {
+      font-size: 0.85rem;
     }
 
     .setor-badge::before {
@@ -170,748 +674,574 @@
       font-size: 0.9rem;
     }
 
-    .setor-badge:hover {
-      transform: translateY(-1px);
-    }
-
-    .setor-badge.empty {
-      background: var(--gray-medium);
-      opacity: 0.7;
-    }
-
     .setor-badge.empty::before {
-      content: '⏳';
-    }
-
-    .equipamento-card {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 15px;
-      border: 2px solid var(--primary);
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .equipamento-card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .equipamento-icon {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: var(--primary);
-    }
-
-    .equipamento-nome {
-      font-weight: 600;
-      color: var(--gray-dark);
-      font-size: 1rem;
-      margin-bottom: 5px;
-    }
-
-    .equipamento-tag {
-      color: var(--gray-medium);
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-
-    .equipamento-nao-operando {
-      border-color: var(--accent);
-      background: #fff5f5;
-    }
-
-    .equipamento-nao-operando .equipamento-icon {
-      color: var(--accent);
-    }
-
-    .equipamento-nao-operando .equipamento-nome {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    .defeito-area {
-      background: #fff5f5;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 15px;
-      border: 2px solid var(--accent);
-    }
-
-    .defeito-icon {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 15px;
-      color: var(--accent);
-    }
-
-    .status-funcionando {
-      color: var(--success);
-      font-weight: 600;
-    }
-
-    .status-parado {
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .form-check-input:checked {
-      background-color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .form-check-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
-    }
-
-    #mensagem {
-      display: none;
-      padding: 20px;
-      margin-top: 25px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-align: center;
-      font-size: 1rem;
-      border: 2px solid transparent;
-    }
-
-    #mensagem.sucesso {
-      background: #d4edda;
-      color: #155724;
-      border-color: #c3e6cb;
-    }
-
-    #mensagem.erro {
-      background: #f8d7da;
-      color: #721c24;
-      border-color: #f5c6cb;
-    }
-
-    .status-container {
-      margin-bottom: 30px;
-    }
-
-    .status-steps {
-      display: flex;
-      justify-content: space-between;
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .status-steps::before {
       content: '';
-      position: absolute;
-      top: 15px;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: #bdc3c7;
-      z-index: 1;
-    }
-
-    .status-bar {
-      position: absolute;
-      top: 15px;
-      left: 0;
-      height: 3px;
-      background: var(--primary);
-      z-index: 2;
-      transition: width 0.5s ease;
-    }
-
-    .step {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      background: #bdc3c7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      color: white;
-      position: relative;
-      z-index: 3;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
-    }
-
-    .step.active {
-      background: var(--primary);
-      transform: scale(1.1);
-    }
-
-    .step-label {
-      position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--gray-dark);
-      white-space: nowrap;
-    }
-
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-      margin-right: 10px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 768px) {
-      .industrial-container {
-        padding: 25px 20px;
-        margin: 10px;
-      }
-      
-      .industrial-section {
-        padding: 20px 15px;
-      }
-      
-      .setores-grid {
-        justify-content: center;
-      }
-      
-      .status-steps {
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-      }
-      
-      .status-steps::before {
-        display: none;
-      }
-      
-      .status-bar {
-        display: none;
-      }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <a href="javascript:history.back()" class="btn-voltar">
-      <i class="fa-solid fa-arrow-left me-2"></i>Voltar
-    </a>
-
-    <div class="industrial-container">
-      
-      <div class="industrial-header">
-        <h1><i class="fa-solid fa-tools me-2"></i>Solicitação de Manutenção Corretiva</h1>
-        <p class="text-muted">Registre solicitações de manutenção para equipamentos industriais</p>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="app-header-left">
+        <div class="app-header-icon">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+        </div>
+        <div class="app-header-text">
+          <h1>
+            Solicitação de Manutenção Corretiva
+            <span class="badge">
+              <i class="fa-solid fa-industry"></i> Pré-moldados
+            </span>
+          </h1>
+          <p>Registre a ocorrência de falhas e quebras de equipamentos na fábrica.</p>
+        </div>
       </div>
+      <div class="app-header-right">
+        <div class="status-pill">
+          <i class="fa-solid fa-circle-check"></i>
+          Sistema de Registro Online
+        </div>
+        <div class="info-mini">
+          <span><i class="fa-regular fa-clock"></i>Funcionamento 24h</span>
+          <span><i class="fa-solid fa-diagram-project"></i>Integrado ao PCM</span>
+        </div>
+      </div>
+    </header>
 
-      <div class="status-container">
-        <div class="status-steps">
-          <div class="status-bar" style="width: 20%;"></div>
-          <div class="step active">
+    <main class="app-main">
+      <section class="painel-etapas">
+        <div class="progress-container">
+          <div class="progress">
+            <div id="progressBar" class="progress-bar-custom"></div>
+          </div>
+          <div class="progress-label">
+            <span id="progressStep">Etapa 1 de 5</span>
+            <span id="progressPercent">0%</span>
+          </div>
+        </div>
+
+        <div class="steps mb-2">
+          <div class="step current" data-step="1">
             <span>1</span>
             <div class="step-label">Requisitante</div>
           </div>
-          <div class="step">
+          <div class="step" data-step="2">
             <span>2</span>
             <div class="step-label">Equipamento</div>
           </div>
-          <div class="step">
+          <div class="step" data-step="3">
             <span>3</span>
             <div class="step-label">Problema</div>
           </div>
-          <div class="step">
+          <div class="step" data-step="4">
             <span>4</span>
             <div class="step-label">Status</div>
           </div>
-          <div class="step">
+          <div class="step" data-step="5">
             <span>5</span>
             <div class="step-label">Enviar</div>
           </div>
         </div>
-      </div>
 
-      <form id="formSolicitacao">
-        
-        <div class="industrial-section">
-          <div class="section-title">
-            <i class="fa-solid fa-user-hard-hat"></i>
-            Dados do Requisitante
-          </div>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">Requisitante *</label>
-              <select id="requisitante" class="form-select" required disabled>
-                <option value="">Carregando...</option>
-              </select>
-            </div>
-            
-            <div class="col-md-6">
-              <label class="form-label">Setores Vinculados</label>
-              <div class="setores-area">
-                <div class="setores-grid" id="setoresGrid">
-                  <div class="setor-badge empty">
-                    <span class="loading-spinner"></span>Carregando...
+        <div id="mensagem" class="mensagem"></div>
+
+        <div class="card-form">
+          <h2 class="section-title">
+            <i class="fa-regular fa-circle-question"></i>
+            Dados da Solicitação
+          </h2>
+          <p class="section-subtitle">
+            Preencha os campos abaixo para registrar a ocorrência. Os campos marcados com * são obrigatórios.
+          </p>
+
+          <form id="formSolicitacao" class="mt-2">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Requisitante *</label>
+                <select id="requisitante" class="form-select" required>
+                  <option value="">Selecione o requisitante...</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Setores Vinculados</label>
+                <div class="setores-area">
+                  <div class="setores-grid" id="setoresGrid">
+                    <div class="setor-badge empty">
+                      Selecione um requisitante
+                    </div>
+                  </div>
+                </div>
+                <div class="equipamento-card-footer-info mt-1">
+                  <i class="fa-regular fa-circle-question"></i> Os setores vinculados ajudam a filtrar os equipamentos disponíveis.
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Equipamento *</label>
+                <select id="tag" class="form-select" required>
+                  <option value="">Selecione o equipamento...</option>
+                </select>
+              </div>
+
+              <div class="col-md-6 d-none">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Descrição do Defeito *</label>
+                <textarea
+                  id="descricaoDefeito"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Descreva o problema observado no equipamento..."
+                  required
+                ></textarea>
+              </div>
+
+              <div class="col-12">
+                <div class="status-equipamento mt-1">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="equipamentoParado">
+                    <label class="form-check-label text-light-emphasis" for="equipamentoParado">
+                      Indicar que o equipamento está parado
+                    </label>
+                  </div>
+                  <div id="statusLabel" class="status-funcionando ms-2">
+                    Equipamento está FUNCIONANDO
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="industrial-section">
-          <div class="section-title">
-            <i class="fa-solid fa-industry"></i>
-            Dados do Equipamento
-          </div>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">TAG do Equipamento *</label>
-              <select id="tag" class="form-select" required disabled>
-                <option value="">Carregando equipamentos...</option>
-              </select>
-              <div class="form-text text-muted mt-2">
-                <small><i class="fa-solid fa-info-circle me-1"></i>Equipamentos não operantes aparecem desabilitados</small>
+            <div class="form-rodape">
+              <div>
+                <span class="badge-turno">
+                  <i class="fa-regular fa-calendar-check"></i>
+                  Esta solicitação será integrad
+                  a ao planejamento de manutenção
+                </span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa-regular fa-paper-plane"></i>
+                  Enviar Solicitação
+                </button>
               </div>
             </div>
-            
-            <div class="col-md-6">
-              <label class="form-label">Descrição do Equipamento</label>
-              <div class="equipamento-card" id="equipamentoCard">
-                <div class="equipamento-icon">
-                  <i class="fa-solid fa-microchip"></i>
+          </form>
+        </div>
+      </section>
+
+      <section class="painel-equipamento">
+        <div class="equipamento-card" id="equipamentoCard">
+          <div class="equipamento-icon-bg"></div>
+          <div class="equipamento-card-content">
+            <div class="equipamento-header">
+              <div class="equipamento-header-left">
+                <div class="equipamento-titulo">
+                  Equipamento selecionado
                 </div>
-                <div class="equipamento-nome" id="equipamentoNome">
-                  Aguardando seleção...
-                </div>
-                <div class="equipamento-tag" id="equipamentoTag">
-                  TAG: ---
+                <div class="equipamento-nome">
+                  <span id="equipamentoNome">Aguardando seleção...</span>
+                  <span class="chip-tag" id="equipamentoTag">TAG: ---</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="industrial-section">
-          <div class="section-title">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            Descrição do Problema
-          </div>
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label">Descrição do Defeito *</label>
-              <div class="defeito-area">
-                <div class="defeito-icon">
-                  <i class="fa-solid fa-wrench"></i>
-                </div>
-                <textarea id="defeito" class="form-control" rows="5" required 
-                          placeholder="Descreva detalhadamente o problema identificado no equipamento..."></textarea>
+              <div class="equipamento-icone">
+                <i class="fa-solid fa-industry"></i>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="industrial-section">
-          <div class="section-title">
-            <i class="fa-solid fa-power-off"></i>
-            Status do Equipamento
-          </div>
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label">Situação do Equipamento no Momento da Solicitação *</label>
-              <div class="defeito-area">
-                <div class="defeito-icon">
-                  <i class="fa-solid fa-circle-exclamation"></i>
+            <div class="equipamento-info-grid">
+              <div class="equipamento-info-item">
+                <span class="label"><i class="fa-regular fa-square-check me-1"></i>Status</span>
+                <span class="value" id="equipamentoStatus">---</span>
+              </div>
+              <div class="equipamento-info-item">
+                <span class="label"><i class="fa-solid fa-layer-group me-1"></i>Setor</span>
+                <span class="value" id="equipamentoSetor">---</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 6px;">
+              <span class="equipamento-status-pill" id="statusOperacionalPill">
+                <i class="fa-regular fa-circle-check"></i>
+                Aguardando seleção
+              </span>
+            </div>
+
+            <div class="equipamento-footer">
+              <div class="badges">
+                <div class="badge-pill">
+                  <i class="fa-solid fa-clipboard-list"></i>
+                  Registro integrado ao PCM
                 </div>
-                <div class="form-check form-switch mb-3">
-                  <input class="form-check-input" type="checkbox" id="equipamentoParado" style="transform: scale(1.5);">
-                  <label class="form-check-label fs-6 fw-bold" for="equipamentoParado">
-                    <span id="statusLabel">Equipamento está FUNCIONANDO</span>
-                  </label>
+                <div class="badge-pill">
+                  <i class="fa-solid fa-bolt"></i>
+                  Priorização por criticidade
                 </div>
-                <div class="alert alert-info mt-3">
-                  <small>
-                    <i class="fa-solid fa-info-circle me-1"></i>
-                    <strong>Marque esta opção</strong> se o equipamento está PARADO devido ao problema reportado. 
-                    Se o equipamento ainda está funcionando, mantenha desmarcado.
-                  </small>
-                </div>
+              </div>
+              <div>
+                <span class="badge-turno">
+                  <i class="fa-solid fa-users-gear"></i>Equipe de Manutenção
+                </span>
               </div>
             </div>
           </div>
         </div>
+      </section>
+    </main>
 
-        <div class="industrial-section text-center">
-          <div class="section-title">
-            <i class="fa-solid fa-paper-plane"></i>
-            Enviar Solicitação
-          </div>
-          <button type="submit" class="btn-industrial" id="btnEnviar">
-            <i class="fa-solid fa-paper-plane me-2"></i>Enviar Solicitação
-          </button>
-        </div>
-
-      </form>
-
-      <div id="mensagem" class="mt-4"></div>
-    </div>
+    <footer class="app-footer">
+      <span>
+        <i class="fa-regular fa-circle-dot"></i>
+        Portal de Manutenção · Protendit
+      </span>
+      <span>
+        <i class="fa-regular fa-lightbulb"></i>
+        Registre sempre que identificar qualquer falha ou anomalia.
+      </span>
+    </footer>
   </div>
 
-  <div class="modal fade modal-advertencia" id="modalAdvertencia" tabindex="-1" aria-hidden="true">
+  <!-- Modal de advertência -->
+  <div class="modal fade" id="modalAdvertencia" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-warning-subtle">
           <h5 class="modal-title">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i>Advertência
+            <i class="fa-solid fa-triangle-exclamation me-2 text-warning"></i>
+            Atenção
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <div class="warning-icon">
-            <i class="fa-solid fa-ban"></i>
-          </div>
-          <h4 class="warning-title">Solicitação Não Permitida</h4>
-          <p class="warning-message" id="modalMensagem"></p>
-          <button type="button" class="btn-warning-modal" data-bs-dismiss="modal">
-            <i class="fa-solid fa-check me-2"></i>Entendido
+          <p id="modalMensagem" class="mb-0">
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Entendi
           </button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Bootstrap JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
 
   <script>
     // URL DO CÓDIGO EXISTENTE (Manutenção Corretiva)
     const urlBase = 'https://script.google.com/macros/s/AKfycbz7Q9tfFXb9o3zywMxwyFUpG6hobT4WYBZ8zT6kfaS0CEcwD42MoBnyf1OlKBLKv9oU/exec';
 
-    let mapaNomeSetores = new Map(); 
+    // NOVO WEB APP (Gestor de OS Corretivas)
+    const urlDistribuicaoOS = 'https://script.google.com/macros/s/AKfycbwMe9rYBD9MtVe1GDRKjv19tAe9JmMGBjPkdn6_lBOv1bpOB-R0MEpuXTeBWwzTdmT5/exec';
+
+    let mapaNomeSetores = new Map();
     let equipamentos = [];
-    let requisitanteSelecionado = '';
-    let carregamentoConcluido = false;
 
-    // === CAPTURA PARÂMETRO DA URL ===
-    function obterParametroURL(nome) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(nome);
-    }
+    function atualizarProgresso(etapaAtual) {
+      const totalEtapas = 5;
+      const percentual = Math.round((etapaAtual / totalEtapas) * 100);
 
-    // === INICIALIZA OS DADOS ===
-    async function iniciarDados() {
-        try {
-            // Obtém o requisitante da URL
-            requisitanteSelecionado = obterParametroURL('requisitante');
-            
-            if (!requisitanteSelecionado) {
-                mostrarMensagem('erro', 'Requisitante não identificado. Volte à página anterior.');
-                return;
-            }
+      const barra = document.getElementById('progressBar');
+      const labelStep = document.getElementById('progressStep');
+      const labelPercent = document.getElementById('progressPercent');
 
-            // Decodifica o nome (caso tenha caracteres especiais)
-            requisitanteSelecionado = decodeURIComponent(requisitanteSelecionado);
+      barra.style.width = `${percentual}%`;
+      labelStep.textContent = `Etapa ${etapaAtual} de ${totalEtapas}`;
+      labelPercent.textContent = `${percentual}%`;
 
-            // Atualiza a interface para mostrar o requisitante fixo
-            document.getElementById('requisitante').innerHTML = `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
-
-            // Mostra indicador de carregamento nos equipamentos
-            const selectTag = document.getElementById('tag');
-            selectTag.innerHTML = '<option value="">Carregando equipamentos...</option>';
-            selectTag.disabled = true;
-
-            // Desabilita o botão de envio durante o carregamento
-            document.getElementById('btnEnviar').disabled = true;
-
-            // Carrega os Setores e Equipamentos em paralelo
-            await Promise.all([carregarSetores(), carregarEquipamentos()]);
-
-            // Verifica se o requisitante existe nos dados
-            if (mapaNomeSetores.has(requisitanteSelecionado)) {
-                const setores = mapaNomeSetores.get(requisitanteSelecionado);
-                atualizarSetoresRequisitante(setores);
-                carregarEquipamentosPorSetores(setores);
-            } else {
-                document.getElementById('setoresGrid').innerHTML = '<div class="setor-badge empty">Nenhum setor vinculado</div>';
-                mostrarMensagem('erro', 'Requisitante não encontrado na base de dados.');
-                selectTag.innerHTML = '<option value="">Nenhum equipamento disponível</option>';
-                selectTag.disabled = true;
-            }
-
-            carregamentoConcluido = true;
-            document.getElementById('btnEnviar').disabled = false;
-            atualizarProgresso(2);
-
-        } catch (e) {
-            console.error('Erro ao carregar dados:', e);
-            mostrarMensagem('erro', 'Erro ao carregar dados do sistema.');
-            document.getElementById('tag').innerHTML = '<option value="">Erro ao carregar equipamentos</option>';
-            document.getElementById('tag').disabled = true;
+      document.querySelectorAll('.step').forEach(stepEl => {
+        const stepNum = parseInt(stepEl.dataset.step, 10);
+        stepEl.classList.remove('current', 'done');
+        if (stepNum < etapaAtual) {
+          stepEl.classList.add('done');
+        } else if (stepNum === etapaAtual) {
+          stepEl.classList.add('current');
         }
+      });
     }
 
-    // === CARREGA SETORES ===
-    async function carregarSetores() {
+    atualizarProgresso(1);
+
+    async function iniciarDados() {
+      try {
         const resSetores = await fetch(`${urlBase}?aba=Setores`);
         const jsonSetores = await resSetores.json();
+        const selectReq = document.getElementById('requisitante');
+        selectReq.innerHTML = '<option value="">Selecione...</option>';
 
         if (jsonSetores.status === 'ok' && Array.isArray(jsonSetores.data)) {
-            jsonSetores.data.forEach(reg => {
-                if (!mapaNomeSetores.has(reg.nome)) mapaNomeSetores.set(reg.nome, []);
-                mapaNomeSetores.get(reg.nome).push(reg.setor);
-            });
-        }
-    }
+          jsonSetores.data.forEach(reg => {
+            if (!mapaNomeSetores.has(reg.nome)) mapaNomeSetores.set(reg.nome, []);
+            mapaNomeSetores.get(reg.nome).push(reg.setor);
+          });
 
-    // === CARREGA EQUIPAMENTOS ===
-    async function carregarEquipamentos() {
+          [...mapaNomeSetores.keys()].sort().forEach(nome => {
+            const opt = document.createElement('option');
+            opt.value = nome;
+            opt.textContent = nome;
+            selectReq.appendChild(opt);
+          });
+        }
+
         const resEqp = await fetch(`${urlBase}?aba=Equipamentos`);
         const jsonEqp = await resEqp.json();
-        
+
         equipamentos = (jsonEqp.status === 'ok' && Array.isArray(jsonEqp.data)) ? jsonEqp.data : [];
+      } catch (error) {
+        console.error('Erro ao iniciar dados:', error);
+        mostrarMensagem('erro', '✗ Não foi possível carregar os dados iniciais.');
+      }
     }
 
-    // === ATUALIZA SETORES DO REQUISITANTE ===
-    function atualizarSetoresRequisitante(setores) {
-        const setoresGrid = document.getElementById('setoresGrid');
-        setoresGrid.innerHTML = '';
+    iniciarDados();
 
-        if (setores.length > 0) {
-            setores.forEach(setor => {
-                const badge = document.createElement('div');
-                badge.className = 'setor-badge';
-                badge.textContent = setor;
-                setoresGrid.appendChild(badge);
-            });
-        } else {
-            const emptyBadge = document.createElement('div');
-            emptyBadge.className = 'setor-badge empty';
-            emptyBadge.textContent = 'Nenhum setor vinculado';
-            setoresGrid.appendChild(emptyBadge);
-        }
-    }
+    document.getElementById('requisitante').addEventListener('change', (e) => {
+      const nome = e.target.value;
+      const setoresGrid = document.getElementById('setoresGrid');
+      setoresGrid.innerHTML = '';
 
-    // === ATUALIZA BARRA DE PROGRESSO ===
-    function atualizarProgresso(passo) {
-        const progressBar = document.querySelector('.status-bar');
-        const steps = document.querySelectorAll('.step');
-        
-        const width = ((passo - 1) / 4) * 100;
-        progressBar.style.width = `${width}%`;
-        
-        steps.forEach((step, index) => {
-            if (index < passo) {
-                step.classList.add('active');
-            } else {
-                step.classList.remove('active');
-            }
-        });
-    }
+      if (!nome || !mapaNomeSetores.has(nome)) {
+        const emptyBadge = document.createElement('div');
+        emptyBadge.className = 'setor-badge empty';
+        emptyBadge.textContent = 'Selecione um requisitante';
+        setoresGrid.appendChild(emptyBadge);
+        document.getElementById('tag').innerHTML = '<option value="">Selecione o equipamento...</option>';
+        return;
+      }
 
-    // === CARREGA EQUIPAMENTOS DOS SETORES VINCULADOS ===
+      const setores = mapaNomeSetores.get(nome);
+      setores.forEach(setor => {
+        const badge = document.createElement('div');
+        badge.className = 'setor-badge';
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        const txt = document.createElement('span');
+        txt.textContent = setor;
+        badge.appendChild(dot);
+        badge.appendChild(txt);
+        setoresGrid.appendChild(badge);
+      });
+
+      if (!setores.length) {
+        const emptyBadge = document.createElement('div');
+        emptyBadge.className = 'setor-badge empty';
+        emptyBadge.textContent = 'Nenhum setor vinculado';
+        setoresGrid.appendChild(emptyBadge);
+      }
+
+      carregarEquipamentosPorSetores(setores);
+      atualizarProgresso(2);
+    });
+
     function carregarEquipamentosPorSetores(listaSetores) {
-        const selectTag = document.getElementById('tag');
-        
-        const equipamentosFiltrados = equipamentos.filter(eq =>
-            listaSetores.includes(eq.setor)
-        );
+      const selectTag = document.getElementById('tag');
+      selectTag.innerHTML = '<option value="">Carregando equipamentos...</option>';
 
-        selectTag.innerHTML = '<option value="">Selecione o equipamento...</option>';
-        
-        if (equipamentosFiltrados.length === 0) {
-            const opt = document.createElement('option');
-            opt.textContent = 'Nenhum equipamento encontrado nos setores vinculados';
-            opt.disabled = true;
-            selectTag.appendChild(opt);
+      const equipamentosFiltrados = equipamentos.filter(eq =>
+        listaSetores.includes(eq.setor)
+      );
+
+      selectTag.innerHTML = '<option value="">Selecione o equipamento...</option>';
+
+      equipamentosFiltrados.forEach(eq => {
+        const estaOperando = eq.status === 'Operando';
+
+        const opt = document.createElement('option');
+        opt.value = eq.tag;
+
+        if (estaOperando) {
+          opt.textContent = `✅ ${eq.tag} - ${eq.equipamento}`;
+          opt.dataset.nomeEquip = eq.equipamento;
+          opt.dataset.operando = true;
         } else {
-            equipamentosFiltrados.forEach(eq => {
-                const estaOperando = eq.status === 'Operando';
-                
-                const opt = document.createElement('option');
-                opt.value = eq.tag;
-                
-                if (estaOperando) {
-                    opt.textContent = `✅ ${eq.tag} - ${eq.equipamento}`;
-                    opt.dataset.nomeEquip = eq.equipamento;
-                    opt.dataset.operando = true;
-                } else {
-                    opt.textContent = `❌ ${eq.tag} - ${eq.equipamento} (${eq.status || 'Não Operando'})`;
-                    opt.dataset.nomeEquip = eq.equipamento;
-                    opt.dataset.operando = false;
-                    opt.disabled = true;
-                }
-                
-                selectTag.appendChild(opt);
-            });
+          opt.textContent = `⚠️ ${eq.tag} - ${eq.equipamento} (QUEDA/QUEBRA)`;
+          opt.dataset.nomeEquip = eq.equipamento;
+          opt.dataset.operando = false;
         }
 
-        // Habilita o select após carregar os equipamentos
-        selectTag.disabled = false;
+        opt.dataset.setor = eq.setor;
+        opt.dataset.status = eq.status;
 
-        document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
-        document.getElementById('equipamentoTag').textContent = 'TAG: ---';
-        document.getElementById('equipamentoCard').classList.remove('equipamento-nao-operando');
+        selectTag.appendChild(opt);
+      });
     }
 
-    // === QUANDO MUDA O TAG ===
     document.getElementById('tag').addEventListener('change', (e) => {
-        if (!carregamentoConcluido) return;
-        
-        const opt = e.target.selectedOptions[0];
-        const equipamentoCard = document.getElementById('equipamentoCard');
-        
-        if (opt && opt.dataset.nomeEquip) {
-            const estaOperando = opt.dataset.operando === 'true';
-            
-            if (estaOperando) {
-                document.getElementById('equipamentoNome').textContent = opt.dataset.nomeEquip;
-                document.getElementById('equipamentoTag').textContent = `TAG: ${opt.value}`;
-                equipamentoCard.classList.remove('equipamento-nao-operando');
-                atualizarProgresso(3);
-            } else {
-                document.getElementById('equipamentoNome').textContent = 'EQUIPAMENTO NÃO OPERANDO';
-                document.getElementById('equipamentoTag').textContent = `TAG: ${opt.value} - Solicitação não permitida`;
-                equipamentoCard.classList.add('equipamento-nao-operando');
-                mostrarModalAdvertencia('Equipamento com status: Quebra Relatada');
-            }
-        } else {
-            document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
-            document.getElementById('equipamentoTag').textContent = 'TAG: ---';
-            equipamentoCard.classList.remove('equipamento-nao-operando');
-        }
+      const opt = e.target.selectedOptions[0];
+      const card = document.getElementById('equipamentoCard');
+      const nome = document.getElementById('equipamentoNome');
+      const tagSpan = document.getElementById('equipamentoTag');
+      const statusSpan = document.getElementById('equipamentoStatus');
+      const setorSpan = document.getElementById('equipamentoSetor');
+      const pill = document.getElementById('statusOperacionalPill');
+
+      if (!opt || !opt.value) {
+        nome.textContent = 'Aguardando seleção...';
+        tagSpan.textContent = 'TAG: ---';
+        statusSpan.textContent = '---';
+        setorSpan.textContent = '---';
+        card.classList.remove('equipamento-nao-operando');
+        pill.innerHTML = '<i class="fa-regular fa-circle-check"></i>Aguardando seleção';
+        atualizarProgresso(1);
+        return;
+      }
+
+      nome.textContent = opt.dataset.nomeEquip || 'Equipamento';
+      tagSpan.textContent = `TAG: ${opt.value}`;
+      statusSpan.textContent = opt.dataset.status || '---';
+      setorSpan.textContent = opt.dataset.setor || '---';
+
+      const operando = opt.dataset.operando === 'true';
+
+      if (operando) {
+        card.classList.remove('equipamento-nao-operando');
+        pill.innerHTML = '<i class="fa-regular fa-circle-check"></i>Operando';
+      } else {
+        card.classList.add('equipamento-nao-operando');
+        pill.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>Quebra relatada';
+      }
+
+      atualizarProgresso(3);
     });
 
-    // === QUANDO FOCA NO TEXTAREA DO DEFEITO ===
-    document.getElementById('defeito').addEventListener('focus', () => {
-        const tagSelect = document.getElementById('tag');
-        const optSelecionada = tagSelect.selectedOptions[0];
-        if (optSelecionada && optSelecionada.dataset.operando === 'true') {
-            atualizarProgresso(4);
-        }
-    });
-
-    // === QUANDO MUDA O STATUS DO EQUIPAMENTO ===
     document.getElementById('equipamentoParado').addEventListener('change', (e) => {
-        const statusLabel = document.getElementById('statusLabel');
-        if (e.target.checked) {
-            statusLabel.textContent = 'Equipamento está PARADO';
-            statusLabel.className = 'status-parado';
-        } else {
-            statusLabel.textContent = 'Equipamento está FUNCIONANDO';
-            statusLabel.className = 'status-funcionando';
-        }
+      const statusLabel = document.getElementById('statusLabel');
+      if (e.target.checked) {
+        statusLabel.textContent = 'Equipamento está PARADO';
+        statusLabel.className = 'status-parado';
+      } else {
+        statusLabel.textContent = 'Equipamento está FUNCIONANDO';
+        statusLabel.className = 'status-funcionando';
+      }
+      atualizarProgresso(4);
+    });
+
+    document.getElementById('descricaoDefeito').addEventListener('input', (e) => {
+      if (e.target.value.trim().length > 5) {
         atualizarProgresso(5);
+      } else {
+        atualizarProgresso(3);
+      }
     });
 
     // === ENVIO DO FORMULÁRIO ===
     document.getElementById('formSolicitacao').addEventListener('submit', async (e) => {
-        e.preventDefault();
+      e.preventDefault();
 
-        if (!carregamentoConcluido) {
-            mostrarMensagem('erro', 'Aguarde o carregamento completo dos dados.');
-            return;
-        }
+      const tagSelect = document.getElementById('tag');
+      const optSelecionada = tagSelect.selectedOptions[0];
 
-        const tagSelect = document.getElementById('tag');
-        const optSelecionada = tagSelect.selectedOptions[0];
-        
-        if (optSelecionada && optSelecionada.dataset.operando === 'false') {
-            mostrarModalAdvertencia('Equipamento com status: Quebra Relatada');
-            return;
-        }
+      if (optSelecionada && optSelecionada.dataset.operando === 'false') {
+        mostrarModalAdvertencia('Equipamento com status: Quebra Relatada');
+        return;
+      }
 
-        const btn = e.target.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
-        
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Enviando...';
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.innerHTML;
 
-        const dadosForm = {
-            requisitante: requisitanteSelecionado,
-            setor: Array.from(document.querySelectorAll('.setor-badge:not(.empty)')).map(badge => badge.textContent).join(', '),
-            tag: document.getElementById('tag').value,
-            equipamento: document.getElementById('equipamentoNome').textContent,
-            defeito: document.getElementById('defeito').value,
-            equipamentoParado: document.getElementById('equipamentoParado').checked
-        };
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Enviando...';
 
-        try {
-            console.log('📤 ENVIANDO SOLICITAÇÃO PRINCIPAL:', dadosForm);
-            
-            // Enviar a solicitação principal
-            const respPrincipal = await fetch(`${urlBase}?action=registrarCorretiva`, {
-                method: 'POST',
-                body: JSON.stringify(dadosForm)
+      const dadosForm = {
+        requisitante: document.getElementById('requisitante').value,
+        tag: document.getElementById('tag').value,
+        equipamento: optSelecionada ? (optSelecionada.dataset.nomeEquip || '') : '',
+        setor: optSelecionada ? (optSelecionada.dataset.setor || '') : '',
+        descricaoDefeito: document.getElementById('descricaoDefeito').value,
+        equipamentoParado: document.getElementById('equipamentoParado').checked
+      };
+
+      if (!dadosForm.requisitante || !dadosForm.tag || !dadosForm.descricaoDefeito.trim()) {
+        mostrarMensagem('erro', '✗ Preencha todos os campos obrigatórios.');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        return;
+      }
+
+      try {
+        const respPrincipal = await fetch(`${urlBase}?action=registrarCorretiva`, {
+          method: 'POST',
+          body: JSON.stringify(dadosForm)
+        });
+
+        const jsonPrincipal = await respPrincipal.json();
+        console.log('📥 RESPOSTA PRINCIPAL:', jsonPrincipal);
+
+        if (jsonPrincipal.status === 'ok') {
+          mostrarMensagem('sucesso', '✓ ' + (jsonPrincipal.data?.mensagem || 'Solicitação registrada com sucesso!'));
+
+          // Dispara a geração/atualização das OS corretivas no NOVO backend
+          try {
+            fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, {
+              method: 'POST'
+            })
+            .then(r => r.json())
+            .then(j => {
+              console.log('📥 RESPOSTA DISTRIBUICAO OS:', j);
+            })
+            .catch(err => {
+              console.error('Erro ao chamar distribuição de OS:', err);
             });
+          } catch (e2) {
+            console.error('Erro inesperado ao acionar urlDistribuicaoOS:', e2);
+          }
 
-            const jsonPrincipal = await respPrincipal.json();
-            console.log('📥 RESPOSTA PRINCIPAL:', jsonPrincipal);
+          // Reset do formulário
+          document.getElementById('formSolicitacao').reset();
+          document.getElementById('setoresGrid').innerHTML = '<div class="setor-badge empty">Selecione um requisitante</div>';
+          document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
+          document.getElementById('equipamentoTag').textContent = 'TAG: ---';
+          document.getElementById('equipamentoCard').classList.remove('equipamento-nao-operando');
+          document.getElementById('tag').innerHTML = '<option value="">Selecione...</option>';
+          document.getElementById('equipamentoParado').checked = false;
+          document.getElementById('statusLabel').textContent = 'Equipamento está FUNCIONANDO';
+          document.getElementById('statusLabel').className = 'status-funcionando';
+          atualizarProgresso(1);
 
-            if (jsonPrincipal.status === 'ok') {
-                mostrarMensagem('sucesso', '✓ ' + (jsonPrincipal.data?.mensagem || 'Solicitação registrada com sucesso!'));
-                
-                // Reset do formulário (mantém o requisitante)
-                document.getElementById('tag').value = '';
-                document.getElementById('defeito').value = '';
-                document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
-                document.getElementById('equipamentoTag').textContent = 'TAG: ---';
-                document.getElementById('equipamentoCard').classList.remove('equipamento-nao-operando');
-                document.getElementById('equipamentoParado').checked = false;
-                document.getElementById('statusLabel').textContent = 'Equipamento está FUNCIONANDO';
-                document.getElementById('statusLabel').className = 'status-funcionando';
-                
-                // Recarrega os equipamentos (pode ser que o status do equipamento tenha mudado)
-                const setores = mapaNomeSetores.get(requisitanteSelecionado) || [];
-                carregarEquipamentosPorSetores(setores);
-                atualizarProgresso(1);
-                
-            } else {
-                if (jsonPrincipal.data && (jsonPrincipal.data.includes('Equipamento com status') || jsonPrincipal.data.includes('não operando') || jsonPrincipal.data.includes('Quebra Relatada'))) {
-                    mostrarModalAdvertencia(jsonPrincipal.data);
-                } else {
-                    mostrarMensagem('erro', '✗ ' + (jsonPrincipal.data || 'Erro ao registrar solicitação.'));
-                }
-            }
-
-        } catch (err) {
-            console.error(err);
-            mostrarMensagem('erro', '✗ Erro de conexão ao registrar solicitação.');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
+        } else {
+          if (jsonPrincipal.data && (jsonPrincipal.data.includes('Equipamento está operando') || jsonPrincipal.data.includes('Quebra Relatada'))) {
+            mostrarModalAdvertencia(jsonPrincipal.data);
+          } else {
+            mostrarMensagem('erro', '✗ ' + (jsonPrincipal.data || 'Erro ao registrar solicitação.'));
+          }
         }
+
+      } catch (err) {
+        console.error(err);
+        mostrarMensagem('erro', '✗ Erro de conexão ao registrar solicitação.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
     });
 
-    // === EXIBE MENSAGEM DE SUCESSO/ERRO ===
     function mostrarMensagem(tipo, texto, tempo = 4000) {
-        const msg = document.getElementById('mensagem');
-        msg.className = tipo;
-        msg.textContent = texto;
-        msg.style.display = 'block';
-        if (tipo === 'sucesso') setTimeout(() => msg.style.display = 'none', tempo);
+      const msg = document.getElementById('mensagem');
+      msg.className = 'mensagem ' + tipo;
+      msg.textContent = texto;
+      msg.style.display = 'block';
+      if (tipo === 'sucesso') setTimeout(() => msg.style.display = 'none', tempo);
     }
 
-    // === MOSTRA MODAL DE ADVERTÊNCIA ===
     function mostrarModalAdvertencia(mensagem) {
-        const modalMensagem = document.getElementById('modalMensagem');
-        const modal = new bootstrap.Modal(document.getElementById('modalAdvertencia'));
-        
-        let mensagemFormatada = mensagem;
-        if (mensagem.includes('Equipamento com status: Quebra Relatada')) {
-            mensagemFormatada = 'Este equipamento já possui uma <strong>Quebra Relatada</strong>.<br><br>Não é possível abrir uma nova solicitação até que a manutenção atual seja concluída.';
-        }
-        
-        modalMensagem.innerHTML = mensagemFormatada;
-        modal.show();
+      const modalMensagem = document.getElementById('modalMensagem');
+      const modal = new bootstrap.Modal(document.getElementById('modalAdvertencia'));
+
+      let mensagemFormatada = mensagem;
+      if (mensagem.includes('Equipamento com status: Quebra Relatada')) {
+        mensagemFormatada = 'Este equipamento já está com quebra relatada. Registre na ficha de manutenção correspondente.';
+      }
+
+      modalMensagem.textContent = mensagemFormatada;
+      modal.show();
     }
-
-    // === INICIA O CARREGAMENTO DOS DADOS ===
-    document.addEventListener('DOMContentLoaded', iniciarDados);
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
