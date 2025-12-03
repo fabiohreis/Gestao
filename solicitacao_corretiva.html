@@ -586,6 +586,7 @@
         return urlParams.get(nome);
     }
 
+    // >>> AJUSTADO: primeiro carrega Equipamentos e Setores, depois monta tudo
     async function iniciarDados() {
         try {
             requisitanteSelecionado = obterParametroURL('requisitante');
@@ -597,11 +598,22 @@
 
             requisitanteSelecionado = decodeURIComponent(requisitanteSelecionado);
 
-            document.getElementById('requisitante').innerHTML = `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
+            document.getElementById('requisitante').innerHTML =
+              `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
 
-            const resSetores = await fetch(`${urlBase}?aba=Setores`);
+            // Carrega equipamentos E setores em paralelo
+            const [resEqp, resSetores] = await Promise.all([
+              fetch(`${urlBase}?aba=Equipamentos`),
+              fetch(`${urlBase}?aba=Setores`)
+            ]);
+
+            const jsonEqp = await resEqp.json();
             const jsonSetores = await resSetores.json();
 
+            // guarda todos os equipamentos
+            equipamentos = (jsonEqp.status === 'ok' && Array.isArray(jsonEqp.data)) ? jsonEqp.data : [];
+
+            // monta mapa de setores por requisitante
             if (jsonSetores.status === 'ok' && Array.isArray(jsonSetores.data)) {
                 jsonSetores.data.forEach(reg => {
                     if (!mapaNomeSetores.has(reg.nome)) mapaNomeSetores.set(reg.nome, []);
@@ -613,16 +625,12 @@
                     atualizarSetoresRequisitante(setores);
                     atualizarProgresso(2);
                 } else {
-                    document.getElementById('setoresGrid').innerHTML = '<div class="setor-badge empty">Nenhum setor vinculado</div>';
+                    document.getElementById('setoresGrid').innerHTML =
+                      '<div class="setor-badge empty">Nenhum setor vinculado</div>';
                     mostrarMensagem('erro', 'Requisitante não encontrado na base de dados.');
                 }
             }
 
-            const resEqp = await fetch(`${urlBase}?aba=Equipamentos`);
-            const jsonEqp = await resEqp.json();
-            
-            equipamentos = (jsonEqp.status === 'ok' && Array.isArray(jsonEqp.data)) ? jsonEqp.data : [];
-            
             atualizarProgresso(1);
         } catch (e) {
             console.error('Erro ao carregar dados:', e);
@@ -768,7 +776,6 @@
             setor: Array.from(document.querySelectorAll('.setor-badge:not(.empty)')).map(badge => badge.textContent).join(', '),
             tag: document.getElementById('tag').value,
             equipamento: document.getElementById('equipamentoNome').textContent,
-            // campo que o backend espera:
             descricaoDefeito: document.getElementById('defeito').value,
             equipamentoParado: document.getElementById('equipamentoParado').checked
         };
@@ -787,7 +794,7 @@
             if (jsonPrincipal.status === 'ok') {
                 mostrarMensagem('sucesso', '✓ ' + (jsonPrincipal.data?.mensagem || 'Solicitação registrada com sucesso!'));
 
-                // chama o NOVO backend para gerar/atualizar as OS
+                // dispara geração/atualização das OS corretivas
                 try {
                     fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, {
                         method: 'POST'
