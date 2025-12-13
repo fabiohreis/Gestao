@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Solicitação de Manutenção Corretiva</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <!-- Bootstrap 5 -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -881,10 +882,10 @@
     // 1) URL DO CÓDIGO EXISTENTE (Manutenção Corretiva) - registrarCorretiva, Setores, Equipamentos
     const urlBase = 'https://script.google.com/macros/s/AKfycbz7Q9tfFXb9o3zywMxwyFUpG6hobT4WYBZ8zT6kfaS0CEcwD42MoBnyf1OlKBLKv9oU/exec';
 
-    // 2) NOVO WEB APP (Gestor de OS Corretivas) - gerarOSCorretivasPendentes
+    // 2) WEB APP (Gestor de OS Corretivas) - gerarOSCorretivasPendentes
     const urlDistribuicaoOS = 'https://script.google.com/macros/s/AKfycbwMe9rYBD9MtVe1GDRKjv19tAe9JmMGBjPkdn6_lBOv1bpOB-R0MEpuXTeBWwzTdmT5/exec';
 
-    // 3) MAIN_PIPELINE (sua implantação) - doGet?action=distribuirOS
+    // 3) MAIN_PIPELINE - doGet?action=executarPipeline
     const urlMainPipeline = 'https://script.google.com/macros/s/AKfycbz_oUv3wgWmdN_C2ySR9tQoAs3Sx9dQaNAggQ5o2AKm5DHimxFuH4_wQDUCTYLt7EVq/exec';
 
     let mapaNomeSetores = new Map();
@@ -1087,35 +1088,50 @@
       atualizarProgresso(1);
     }
 
+    function safeJsonParse_(text) {
+      try { return JSON.parse(text); }
+      catch (e) { return { success: false, error: 'Resposta não-JSON', raw: text }; }
+    }
+
+    async function fetchJSON_(url, options) {
+      const resp = await fetch(url, options || {});
+      const txt = await resp.text();
+      const json = safeJsonParse_(txt);
+      if (!resp.ok) {
+        return { success: false, httpStatus: resp.status, response: json };
+      }
+      return json;
+    }
+
     async function executarPosRegistroPipeline_() {
-      // Mantém o que estava funcionando: 1) gerar OS corretivas pendentes
-      // Acrescenta: 2) distribuir OS automaticamente (MAIN_PIPELINE)
+      // Fluxo pós-registro:
+      // 1) Gerar OS corretivas pendentes (no webapp específico)
+      // 2) Executar pipeline completo no MAIN_PIPELINE (executarPipeline)
       const resumo = {
         gerarOSCorretivasPendentes: null,
-        distribuirOS: null
+        executarPipeline: null
       };
 
       // 1) Gera OS corretivas pendentes (POST)
       try {
         setLoading(true, 'Gerando OS corretivas pendentes...');
-        const r1 = await fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, { method: 'POST' });
-        resumo.gerarOSCorretivasPendentes = await r1.json();
+        const url1 = `${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes&_t=${Date.now()}`;
+        resumo.gerarOSCorretivasPendentes = await fetchJSON_(url1, { method: 'POST' });
         console.log('📥 RESPOSTA gerarOSCorretivasPendentes:', resumo.gerarOSCorretivasPendentes);
       } catch (e) {
         console.error('Erro ao gerar OS corretivas pendentes:', e);
         resumo.gerarOSCorretivasPendentes = { success: false, error: String(e) };
       }
 
-      // 2) Distribui OS automaticamente (GET do MAIN_PIPELINE)
+      // 2) Executa pipeline completo (GET do MAIN_PIPELINE)
       try {
-        setLoading(true, 'Distribuindo OS automaticamente (MAIN_PIPELINE)...');
-        const cacheBust = `&_t=${Date.now()}`;
-        const r2 = await fetch(`${urlMainPipeline}?action=distribuirOS${cacheBust}`, { method: 'GET' });
-        resumo.distribuirOS = await r2.json();
-        console.log('📥 RESPOSTA MAIN_PIPELINE distribuirOS:', resumo.distribuirOS);
+        setLoading(true, 'Executando pipeline completo (Preventivas → Fila → Distribuição → Status)...');
+        const url2 = `${urlMainPipeline}?action=executarPipeline&_t=${Date.now()}`;
+        resumo.executarPipeline = await fetchJSON_(url2, { method: 'GET' });
+        console.log('📥 RESPOSTA MAIN_PIPELINE executarPipeline:', resumo.executarPipeline);
       } catch (e) {
-        console.error('Erro ao distribuir OS automaticamente (MAIN_PIPELINE):', e);
-        resumo.distribuirOS = { success: false, error: String(e) };
+        console.error('Erro ao executar pipeline (MAIN_PIPELINE):', e);
+        resumo.executarPipeline = { success: false, error: String(e) };
       } finally {
         setLoading(false);
       }
@@ -1247,17 +1263,21 @@
           body: JSON.stringify(dadosForm)
         });
 
-        const jsonPrincipal = await respPrincipal.json();
+        const txt = await respPrincipal.text();
+        const jsonPrincipal = safeJsonParse_(txt);
         console.log('📥 RESPOSTA PRINCIPAL:', jsonPrincipal);
 
         if (jsonPrincipal.status === 'ok') {
           mostrarMensagem('sucesso', '✓ ' + (jsonPrincipal.data?.mensagem || 'Solicitação registrada com sucesso!'));
 
-          // Agora executa: gerar OS corretivas pendentes + distribuir OS automaticamente
+          // Pós-registro: gera OS corretivas pendentes + executa pipeline completo
           const resumo = await executarPosRegistroPipeline_();
-
-          // Se quiser, você pode “logar” de forma mais amigável; mantive neutro para não mascarar retorno.
           console.log('✅ RESUMO PIPELINE PÓS-REGISTRO:', resumo);
+
+          // Se quiser tornar visível ao usuário quando der erro no pipeline:
+          if (resumo.executarPipeline && resumo.executarPipeline.success === false) {
+            mostrarMensagem('erro', 'Pipeline executado com erro. Verifique o console (F12) e o log do Apps Script.');
+          }
 
           resetUIPosEnvio();
 
