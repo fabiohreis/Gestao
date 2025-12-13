@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Solicitação de Manutenção Corretiva</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <!-- Bootstrap 5 -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -11,6 +12,7 @@
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
     crossorigin="anonymous"
   >
+
   <!-- Font Awesome -->
   <link
     rel="stylesheet"
@@ -33,9 +35,7 @@
       --cor-aviso: #ffc107;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -136,9 +136,7 @@
       font-size: 0.75rem;
     }
 
-    .app-header-right .status-pill i {
-      color: #22c55e;
-    }
+    .app-header-right .status-pill i { color: #22c55e; }
 
     .app-header-right .info-mini {
       display: flex;
@@ -160,12 +158,8 @@
     }
 
     @media (max-width: 992px) {
-      .app-main {
-        grid-template-columns: 1fr;
-      }
-      .app-container {
-        margin: 12px;
-      }
+      .app-main { grid-template-columns: 1fr; }
+      .app-container { margin: 12px; }
     }
 
     .painel-etapas {
@@ -211,10 +205,7 @@
       font-weight: 600;
     }
 
-    .step-label {
-      font-weight: 500;
-      letter-spacing: 0.02em;
-    }
+    .step-label { font-weight: 500; letter-spacing: 0.02em; }
 
     .step.current {
       background: linear-gradient(to right, #e0f2fe, #f5f3ff);
@@ -222,10 +213,7 @@
       color: #0f172a;
     }
 
-    .step.current span {
-      background: #0d6efd;
-      color: #fff;
-    }
+    .step.current span { background: #0d6efd; color: #fff; }
 
     .step.done {
       background: #ecfdf3;
@@ -233,14 +221,9 @@
       color: #166534;
     }
 
-    .step.done span {
-      background: #22c55e;
-      color: #fff;
-    }
+    .step.done span { background: #22c55e; color: #fff; }
 
-    .progress-container {
-      margin-bottom: 10px;
-    }
+    .progress-container { margin-bottom: 10px; }
 
     .progress {
       height: 6px;
@@ -304,9 +287,7 @@
       color: #0f172a;
     }
 
-    .section-title i {
-      color: #0d6efd;
-    }
+    .section-title i { color: #0d6efd; }
 
     .section-subtitle {
       font-size: 0.75rem;
@@ -360,10 +341,7 @@
       pointer-events: none;
     }
 
-    .equipamento-card-content {
-      position: relative;
-      z-index: 1;
-    }
+    .equipamento-card-content { position: relative; z-index: 1; }
 
     .equipamento-header {
       display: flex;
@@ -438,9 +416,7 @@
       font-size: 0.75rem;
     }
 
-    .equipamento-info-item span.label {
-      color: #9ca3af;
-    }
+    .equipamento-info-item span.label { color: #9ca3af; }
 
     .equipamento-info-item span.value {
       font-weight: 500;
@@ -462,9 +438,7 @@
       text-transform: uppercase;
     }
 
-    .equipamento-status-pill i {
-      color: #22c55e;
-    }
+    .equipamento-status-pill i { color: #22c55e; }
 
     .equipamento-nao-operando .equipamento-status-pill {
       border-color: rgba(248,113,113,0.7);
@@ -510,15 +484,8 @@
       gap: 8px;
     }
 
-    .status-parado {
-      color: #fecaca;
-      font-weight: 600;
-    }
-
-    .status-funcionando {
-      color: #bbf7d0;
-      font-weight: 600;
-    }
+    .status-parado { color: #fecaca; font-weight: 600; }
+    .status-funcionando { color: #bbf7d0; font-weight: 600; }
 
     .setores-area {
       border-radius: 10px;
@@ -528,11 +495,7 @@
       min-height: 42px;
     }
 
-    .setores-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
+    .setores-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 
     .setor-badge {
       padding: 3px 7px;
@@ -545,10 +508,7 @@
       gap: 6px;
     }
 
-    .setor-badge::before {
-      content: '🏭';
-      font-size: 0.9rem;
-    }
+    .setor-badge::before { content: '🏭'; font-size: 0.9rem; }
 
     .setor-badge.empty {
       border-style: dashed;
@@ -557,14 +517,9 @@
       color: #64748b;
     }
 
-    .setor-badge.empty::before {
-      content: '';
-    }
+    .setor-badge.empty::before { content: ''; }
 
-    .equipamento-card-footer-info {
-      font-size: 0.7rem;
-      color: #9ca3af;
-    }
+    .equipamento-card-footer-info { font-size: 0.7rem; color: #9ca3af; }
 
     .form-rodape {
       display: flex;
@@ -615,9 +570,7 @@
       gap: 4px;
     }
 
-    .app-footer span i {
-      font-size: 0.8rem;
-    }
+    .app-footer span i { font-size: 0.8rem; }
 
     .equipamento-icon-bg {
       position: absolute;
@@ -630,7 +583,6 @@
       mix-blend-mode: screen;
     }
 
-    /* Indicador de carregamento inicial */
     .loading-indicator {
       display: flex;
       align-items: center;
@@ -647,6 +599,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="app-container">
     <header class="app-header">
@@ -688,33 +641,17 @@
           </div>
         </div>
 
-        <!-- NOVO: indicador de carregamento inicial -->
         <div id="loadingIndicator" class="loading-indicator">
           <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
           <span>Carregando dados iniciais (requisitante, setores e equipamentos)...</span>
         </div>
 
         <div class="steps mb-2">
-          <div class="step current" data-step="1">
-            <span>1</span>
-            <div class="step-label">Requisitante</div>
-          </div>
-          <div class="step" data-step="2">
-            <span>2</span>
-            <div class="step-label">Equipamento</div>
-          </div>
-          <div class="step" data-step="3">
-            <span>3</span>
-            <div class="step-label">Problema</div>
-          </div>
-          <div class="step" data-step="4">
-            <span>4</span>
-            <div class="step-label">Status</div>
-          </div>
-          <div class="step" data-step="5">
-            <span>5</span>
-            <div class="step-label">Enviar</div>
-          </div>
+          <div class="step current" data-step="1"><span>1</span><div class="step-label">Requisitante</div></div>
+          <div class="step" data-step="2"><span>2</span><div class="step-label">Equipamento</div></div>
+          <div class="step" data-step="3"><span>3</span><div class="step-label">Problema</div></div>
+          <div class="step" data-step="4"><span>4</span><div class="step-label">Status</div></div>
+          <div class="step" data-step="5"><span>5</span><div class="step-label">Enviar</div></div>
         </div>
 
         <div id="mensagem" class="mensagem"></div>
@@ -741,9 +678,7 @@
                 <label class="form-label">Setores Vinculados</label>
                 <div class="setores-area">
                   <div class="setores-grid" id="setoresGrid">
-                    <div class="setor-badge empty">
-                      Carregando...
-                    </div>
+                    <div class="setor-badge empty">Carregando...</div>
                   </div>
                 </div>
                 <div class="equipamento-card-footer-info mt-1">
@@ -764,9 +699,7 @@
                   <div class="equipamento-card-content">
                     <div class="equipamento-header">
                       <div class="equipamento-header-left">
-                        <div class="equipamento-titulo">
-                          Equipamento selecionado
-                        </div>
+                        <div class="equipamento-titulo">Equipamento selecionado</div>
                         <div class="equipamento-nome">
                           <span id="equipamentoNome">Aguardando seleção...</span>
                           <span class="chip-tag" id="equipamentoTag">TAG: ---</span>
@@ -856,6 +789,7 @@
                 </button>
               </div>
             </div>
+
           </form>
         </div>
       </section>
@@ -866,9 +800,7 @@
           <div class="equipamento-card-content">
             <div class="equipamento-header">
               <div class="equipamento-header-left">
-                <div class="equipamento-titulo">
-                  Equipamento selecionado
-                </div>
+                <div class="equipamento-titulo">Equipamento selecionado</div>
                 <div class="equipamento-nome">
                   <span id="equipamentoNomePreview">Aguardando seleção...</span>
                   <span class="chip-tag" id="equipamentoTagPreview">TAG: ---</span>
@@ -1095,8 +1027,7 @@
         requisitanteSelecionado = decodeURIComponent(requisitanteSelecionado);
 
         const selectReq = document.getElementById('requisitante');
-        selectReq.innerHTML =
-          `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
+        selectReq.innerHTML = `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
         selectReq.disabled = true;
 
         const resSetores = await fetch(`${urlBase}?aba=Setores`);
@@ -1262,10 +1193,9 @@
         if (jsonPrincipal.status === 'ok') {
           mostrarMensagem('sucesso', '✓ ' + (jsonPrincipal.data?.mensagem || 'Solicitação registrada com sucesso!'));
 
+          // Dispara o gerador de OS corretivas pendentes (novo webapp)
           try {
-            fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, {
-              method: 'POST'
-            })
+            fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, { method: 'POST' })
               .then(r => r.json())
               .then(j => console.log('📥 RESPOSTA DISTRIBUICAO OS:', j))
               .catch(err => console.error('Erro ao chamar distribuição de OS:', err));
@@ -1273,6 +1203,7 @@
             console.error('Erro inesperado ao acionar urlDistribuicaoOS:', e2);
           }
 
+          // Reset visual
           document.getElementById('tag').value = '';
           document.getElementById('descricaoDefeito').value = '';
           document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
@@ -1300,11 +1231,13 @@
           atualizarProgresso(1);
 
         } else {
-          if (jsonPrincipal.data &&
-            (jsonPrincipal.data.includes('Equipamento com status') ||
-              jsonPrincipal.data.includes('não operando') ||
-              jsonPrincipal.data.includes('Quebra Relatada'))) {
-            mostrarModalAdvertencia(jsonPrincipal.data);
+          if (
+            jsonPrincipal.data &&
+            (String(jsonPrincipal.data).includes('Equipamento com status') ||
+             String(jsonPrincipal.data).includes('não operando') ||
+             String(jsonPrincipal.data).includes('Quebra Relatada'))
+          ) {
+            mostrarModalAdvertencia(String(jsonPrincipal.data));
           } else {
             mostrarMensagem('erro', '✗ ' + (jsonPrincipal.data || 'Erro ao registrar solicitação.'));
           }
