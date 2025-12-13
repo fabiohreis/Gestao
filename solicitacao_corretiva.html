@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Solicitação de Manutenção Corretiva</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <!-- Bootstrap 5 -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -12,7 +11,6 @@
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
     crossorigin="anonymous"
   >
-
   <!-- Font Awesome -->
   <link
     rel="stylesheet"
@@ -302,16 +300,14 @@
       margin-bottom: 4px;
     }
 
-    .form-control,
-    .form-select {
+    .form-control, .form-select {
       font-size: 0.85rem;
       border-radius: 10px;
       border-color: rgba(148, 163, 184, 0.7);
       padding: 7px 10px;
     }
 
-    .form-control:focus,
-    .form-select:focus {
+    .form-control:focus, .form-select:focus {
       outline: none;
       box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.2);
       border-color: #0d6efd;
@@ -462,11 +458,7 @@
       color: #9ca3af;
     }
 
-    .equipamento-footer .badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
+    .equipamento-footer .badges { display: flex; flex-wrap: wrap; gap: 6px; }
 
     .equipamento-footer .badge-pill {
       padding: 3px 7px;
@@ -495,7 +487,11 @@
       min-height: 42px;
     }
 
-    .setores-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .setores-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
 
     .setor-badge {
       padding: 3px 7px;
@@ -564,12 +560,7 @@
       background: #f8fafc;
     }
 
-    .app-footer span {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
+    .app-footer span { display: inline-flex; align-items: center; gap: 4px; }
     .app-footer span i { font-size: 0.8rem; }
 
     .equipamento-icon-bg {
@@ -583,8 +574,9 @@
       mix-blend-mode: screen;
     }
 
+    /* Indicador de carregamento */
     .loading-indicator {
-      display: flex;
+      display: none;
       align-items: center;
       gap: 8px;
       font-size: 0.8rem;
@@ -599,7 +591,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="app-container">
     <header class="app-header">
@@ -643,7 +634,7 @@
 
         <div id="loadingIndicator" class="loading-indicator">
           <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
-          <span>Carregando dados iniciais (requisitante, setores e equipamentos)...</span>
+          <span id="loadingText">Carregando dados iniciais (requisitante, setores e equipamentos)...</span>
         </div>
 
         <div class="steps mb-2">
@@ -705,9 +696,7 @@
                           <span class="chip-tag" id="equipamentoTag">TAG: ---</span>
                         </div>
                       </div>
-                      <div class="equipamento-icone">
-                        <i class="fa-solid fa-industry"></i>
-                      </div>
+                      <div class="equipamento-icone"><i class="fa-solid fa-industry"></i></div>
                     </div>
 
                     <div class="equipamento-info-grid">
@@ -783,13 +772,12 @@
                 </span>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <button type="submit" class="btn btn-primary">
+                <button id="btnEnviar" type="submit" class="btn btn-primary">
                   <i class="fa-regular fa-paper-plane"></i>
                   Enviar Solicitação
                 </button>
               </div>
             </div>
-
           </form>
         </div>
       </section>
@@ -806,9 +794,7 @@
                   <span class="chip-tag" id="equipamentoTagPreview">TAG: ---</span>
                 </div>
               </div>
-              <div class="equipamento-icone">
-                <i class="fa-solid fa-industry"></i>
-              </div>
+              <div class="equipamento-icone"><i class="fa-solid fa-industry"></i></div>
             </div>
 
             <div class="equipamento-info-grid">
@@ -878,9 +864,7 @@
           <p id="modalMensagem" class="mb-0"></p>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">
-            Entendi
-          </button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Entendi</button>
         </div>
       </div>
     </div>
@@ -894,10 +878,14 @@
   ></script>
 
   <script>
-    // URL DO CÓDIGO EXISTENTE (Manutenção Corretiva)
+    // 1) URL DO CÓDIGO EXISTENTE (Manutenção Corretiva) - registrarCorretiva, Setores, Equipamentos
     const urlBase = 'https://script.google.com/macros/s/AKfycbz7Q9tfFXb9o3zywMxwyFUpG6hobT4WYBZ8zT6kfaS0CEcwD42MoBnyf1OlKBLKv9oU/exec';
-    // NOVO WEB APP (Gestor de OS Corretivas)
+
+    // 2) NOVO WEB APP (Gestor de OS Corretivas) - gerarOSCorretivasPendentes
     const urlDistribuicaoOS = 'https://script.google.com/macros/s/AKfycbwMe9rYBD9MtVe1GDRKjv19tAe9JmMGBjPkdn6_lBOv1bpOB-R0MEpuXTeBWwzTdmT5/exec';
+
+    // 3) MAIN_PIPELINE (sua implantação) - doGet?action=distribuirOS
+    const urlMainPipeline = 'https://script.google.com/macros/s/AKfycbz_oUv3wgWmdN_C2ySR9tQoAs3Sx9dQaNAggQ5o2AKm5DHimxFuH4_wQDUCTYLt7EVq/exec';
 
     let mapaNomeSetores = new Map();
     let equipamentos = [];
@@ -918,11 +906,8 @@
       document.querySelectorAll('.step').forEach(stepEl => {
         const stepNum = parseInt(stepEl.dataset.step, 10);
         stepEl.classList.remove('current', 'done');
-        if (stepNum < etapaAtual) {
-          stepEl.classList.add('done');
-        } else if (stepNum === etapaAtual) {
-          stepEl.classList.add('current');
-        }
+        if (stepNum < etapaAtual) stepEl.classList.add('done');
+        else if (stepNum === etapaAtual) stepEl.classList.add('current');
       });
     }
 
@@ -933,7 +918,7 @@
       return urlParams.get(nome);
     }
 
-    function mostrarMensagem(tipo, texto, tempo = 4000) {
+    function mostrarMensagem(tipo, texto, tempo = 4500) {
       const msg = document.getElementById('mensagem');
       msg.className = 'mensagem ' + tipo;
       msg.textContent = texto;
@@ -941,12 +926,25 @@
       if (tipo === 'sucesso') setTimeout(() => msg.style.display = 'none', tempo);
     }
 
+    function setLoading(ativo, texto) {
+      const loading = document.getElementById('loadingIndicator');
+      const loadingText = document.getElementById('loadingText');
+      if (!loading || !loadingText) return;
+
+      if (ativo) {
+        loadingText.textContent = texto || 'Processando...';
+        loading.style.display = 'flex';
+      } else {
+        loading.style.display = 'none';
+      }
+    }
+
     function mostrarModalAdvertencia(mensagem) {
       const modalMensagem = document.getElementById('modalMensagem');
       const modal = new bootstrap.Modal(document.getElementById('modalAdvertencia'));
 
       let mensagemFormatada = mensagem;
-      if (mensagem.includes('Equipamento com status: Quebra Relatada')) {
+      if (String(mensagem).includes('Equipamento com status: Quebra Relatada')) {
         mensagemFormatada =
           'Este equipamento já possui uma quebra relatada. Não é possível abrir nova solicitação até a conclusão da manutenção.';
       }
@@ -979,9 +977,7 @@
       const selectTag = document.getElementById('tag');
       selectTag.innerHTML = '<option value="">Carregando equipamentos...</option>';
 
-      const equipamentosFiltrados = equipamentos.filter(eq =>
-        listaSetores.includes(eq.setor)
-      );
+      const equipamentosFiltrados = equipamentos.filter(eq => listaSetores.includes(eq.setor));
 
       selectTag.innerHTML = '<option value="">Selecione o equipamento...</option>';
 
@@ -1014,8 +1010,7 @@
     }
 
     async function iniciarDados() {
-      const loading = document.getElementById('loadingIndicator');
-      if (loading) loading.style.display = 'flex';
+      setLoading(true, 'Carregando dados iniciais (requisitante, setores e equipamentos)...');
 
       try {
         requisitanteSelecionado = obterParametroURL('requisitante');
@@ -1027,7 +1022,8 @@
         requisitanteSelecionado = decodeURIComponent(requisitanteSelecionado);
 
         const selectReq = document.getElementById('requisitante');
-        selectReq.innerHTML = `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
+        selectReq.innerHTML =
+          `<option value="${requisitanteSelecionado}" selected>${requisitanteSelecionado}</option>`;
         selectReq.disabled = true;
 
         const resSetores = await fetch(`${urlBase}?aba=Setores`);
@@ -1058,8 +1054,73 @@
         console.error('Erro ao carregar dados:', e);
         mostrarMensagem('erro', 'Erro ao carregar dados do sistema.');
       } finally {
-        if (loading) loading.style.display = 'none';
+        setLoading(false);
       }
+    }
+
+    function resetUIPosEnvio() {
+      document.getElementById('tag').value = '';
+      document.getElementById('descricaoDefeito').value = '';
+
+      document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
+      document.getElementById('equipamentoTag').textContent = 'TAG: ---';
+      document.getElementById('equipamentoStatus').textContent = '---';
+      document.getElementById('equipamentoSetor').textContent = '---';
+      document.getElementById('statusOperacionalPill').innerHTML =
+        '<i class="fa-regular fa-circle-check"></i>Aguardando seleção';
+      document.getElementById('equipamentoCard').classList.remove('equipamento-nao-operando');
+
+      document.getElementById('equipamentoNomePreview').textContent = 'Aguardando seleção...';
+      document.getElementById('equipamentoTagPreview').textContent = 'TAG: ---';
+      document.getElementById('equipamentoStatusPreview').textContent = '---';
+      document.getElementById('equipamentoSetorPreview').textContent = '---';
+      document.getElementById('statusOperacionalPillPreview').innerHTML =
+        '<i class="fa-regular fa-circle-check"></i>Aguardando seleção';
+      document.getElementById('equipamentoCardPreview').classList.remove('equipamento-nao-operando');
+
+      document.getElementById('equipamentoParado').checked = false;
+      document.getElementById('statusLabel').textContent = 'Equipamento está FUNCIONANDO';
+      document.getElementById('statusLabel').className = 'status-funcionando ms-2';
+
+      const setores = mapaNomeSetores.get(requisitanteSelecionado) || [];
+      carregarEquipamentosPorSetores(setores);
+      atualizarProgresso(1);
+    }
+
+    async function executarPosRegistroPipeline_() {
+      // Mantém o que estava funcionando: 1) gerar OS corretivas pendentes
+      // Acrescenta: 2) distribuir OS automaticamente (MAIN_PIPELINE)
+      const resumo = {
+        gerarOSCorretivasPendentes: null,
+        distribuirOS: null
+      };
+
+      // 1) Gera OS corretivas pendentes (POST)
+      try {
+        setLoading(true, 'Gerando OS corretivas pendentes...');
+        const r1 = await fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, { method: 'POST' });
+        resumo.gerarOSCorretivasPendentes = await r1.json();
+        console.log('📥 RESPOSTA gerarOSCorretivasPendentes:', resumo.gerarOSCorretivasPendentes);
+      } catch (e) {
+        console.error('Erro ao gerar OS corretivas pendentes:', e);
+        resumo.gerarOSCorretivasPendentes = { success: false, error: String(e) };
+      }
+
+      // 2) Distribui OS automaticamente (GET do MAIN_PIPELINE)
+      try {
+        setLoading(true, 'Distribuindo OS automaticamente (MAIN_PIPELINE)...');
+        const cacheBust = `&_t=${Date.now()}`;
+        const r2 = await fetch(`${urlMainPipeline}?action=distribuirOS${cacheBust}`, { method: 'GET' });
+        resumo.distribuirOS = await r2.json();
+        console.log('📥 RESPOSTA MAIN_PIPELINE distribuirOS:', resumo.distribuirOS);
+      } catch (e) {
+        console.error('Erro ao distribuir OS automaticamente (MAIN_PIPELINE):', e);
+        resumo.distribuirOS = { success: false, error: String(e) };
+      } finally {
+        setLoading(false);
+      }
+
+      return resumo;
     }
 
     document.getElementById('tag').addEventListener('change', (e) => {
@@ -1093,6 +1154,7 @@
         setorSpanP.textContent = '---';
         pillP.innerHTML = '<i class="fa-regular fa-circle-check"></i>Aguardando seleção';
         cardP.classList.remove('equipamento-nao-operando');
+
         atualizarProgresso(1);
         return;
       }
@@ -1137,11 +1199,8 @@
     });
 
     document.getElementById('descricaoDefeito').addEventListener('input', (e) => {
-      if (e.target.value.trim().length > 5) {
-        atualizarProgresso(5);
-      } else {
-        atualizarProgresso(3);
-      }
+      if (e.target.value.trim().length > 5) atualizarProgresso(5);
+      else atualizarProgresso(3);
     });
 
     document.getElementById('formSolicitacao').addEventListener('submit', async (e) => {
@@ -1155,7 +1214,7 @@
         return;
       }
 
-      const btn = e.target.querySelector('button[type="submit"]');
+      const btn = document.getElementById('btnEnviar');
       const originalText = btn.innerHTML;
 
       btn.disabled = true;
@@ -1182,6 +1241,7 @@
       }
 
       try {
+        setLoading(true, 'Registrando solicitação corretiva...');
         const respPrincipal = await fetch(`${urlBase}?action=registrarCorretiva`, {
           method: 'POST',
           body: JSON.stringify(dadosForm)
@@ -1193,53 +1253,23 @@
         if (jsonPrincipal.status === 'ok') {
           mostrarMensagem('sucesso', '✓ ' + (jsonPrincipal.data?.mensagem || 'Solicitação registrada com sucesso!'));
 
-          // Dispara o gerador de OS corretivas pendentes (novo webapp)
-          try {
-            fetch(`${urlDistribuicaoOS}?action=gerarOSCorretivasPendentes`, { method: 'POST' })
-              .then(r => r.json())
-              .then(j => console.log('📥 RESPOSTA DISTRIBUICAO OS:', j))
-              .catch(err => console.error('Erro ao chamar distribuição de OS:', err));
-          } catch (e2) {
-            console.error('Erro inesperado ao acionar urlDistribuicaoOS:', e2);
-          }
+          // Agora executa: gerar OS corretivas pendentes + distribuir OS automaticamente
+          const resumo = await executarPosRegistroPipeline_();
 
-          // Reset visual
-          document.getElementById('tag').value = '';
-          document.getElementById('descricaoDefeito').value = '';
-          document.getElementById('equipamentoNome').textContent = 'Aguardando seleção...';
-          document.getElementById('equipamentoTag').textContent = 'TAG: ---';
-          document.getElementById('equipamentoStatus').textContent = '---';
-          document.getElementById('equipamentoSetor').textContent = '---';
-          document.getElementById('statusOperacionalPill').innerHTML =
-            '<i class="fa-regular fa-circle-check"></i>Aguardando seleção';
-          document.getElementById('equipamentoCard').classList.remove('equipamento-nao-operando');
+          // Se quiser, você pode “logar” de forma mais amigável; mantive neutro para não mascarar retorno.
+          console.log('✅ RESUMO PIPELINE PÓS-REGISTRO:', resumo);
 
-          document.getElementById('equipamentoNomePreview').textContent = 'Aguardando seleção...';
-          document.getElementById('equipamentoTagPreview').textContent = 'TAG: ---';
-          document.getElementById('equipamentoStatusPreview').textContent = '---';
-          document.getElementById('equipamentoSetorPreview').textContent = '---';
-          document.getElementById('statusOperacionalPillPreview').innerHTML =
-            '<i class="fa-regular fa-circle-check"></i>Aguardando seleção';
-          document.getElementById('equipamentoCardPreview').classList.remove('equipamento-nao-operando');
-
-          document.getElementById('equipamentoParado').checked = false;
-          document.getElementById('statusLabel').textContent = 'Equipamento está FUNCIONANDO';
-          document.getElementById('statusLabel').className = 'status-funcionando ms-2';
-
-          const setores = mapaNomeSetores.get(requisitanteSelecionado) || [];
-          carregarEquipamentosPorSetores(setores);
-          atualizarProgresso(1);
+          resetUIPosEnvio();
 
         } else {
-          if (
-            jsonPrincipal.data &&
-            (String(jsonPrincipal.data).includes('Equipamento com status') ||
-             String(jsonPrincipal.data).includes('não operando') ||
-             String(jsonPrincipal.data).includes('Quebra Relatada'))
-          ) {
-            mostrarModalAdvertencia(String(jsonPrincipal.data));
+          const msg = (jsonPrincipal.data != null) ? String(jsonPrincipal.data) : '';
+          if (msg &&
+              (msg.includes('Equipamento com status') ||
+               msg.includes('não operando') ||
+               msg.includes('Quebra Relatada'))) {
+            mostrarModalAdvertencia(msg);
           } else {
-            mostrarMensagem('erro', '✗ ' + (jsonPrincipal.data || 'Erro ao registrar solicitação.'));
+            mostrarMensagem('erro', '✗ ' + (msg || 'Erro ao registrar solicitação.'));
           }
         }
 
@@ -1247,6 +1277,7 @@
         console.error(err);
         mostrarMensagem('erro', '✗ Erro de conexão ao registrar solicitação.');
       } finally {
+        setLoading(false);
         btn.disabled = false;
         btn.innerHTML = originalText;
       }
